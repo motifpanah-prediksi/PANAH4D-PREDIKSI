@@ -3126,1905 +3126,625 @@ function togglePrediksi(){
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    // =========================================================
-    // CONFIG
-    // =========================================================
-
     const API =
         "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=";
 
     const fallbackLogo =
         "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Soccerball.svg/512px-Soccerball.svg.png";
 
+    const CACHE_PREFIX = "team_logo_fast_v5_";
 
-    // =========================================================
+    const CACHE_TIME =
+        30 * 24 * 60 * 60 * 1000;
+
+
+    // =====================================================
     // TEAM ALIAS
-    // =========================================================
+    // =====================================================
 
     const teamAlias = {
 
-        // =========================
-        // ENGLAND
-        // =========================
+        "ATL. MADRID": "Atletico Madrid",
+        "ATLETICO MADRID": "Atletico Madrid",
+        "ATLETICO": "Atletico Madrid",
+
+        "MÁLAGA": "Malaga",
+        "MALAGA": "Malaga",
+
+        "GETAFE": "Getafe",
+
+        "R. RACING CLUB": "Racing Club",
+        "RACING CLUB": "Racing Club",
+
+        "REAL MADRID": "Real Madrid",
+        "BARCELONA": "Barcelona",
+        "SEVILLA": "Sevilla",
+        "VALENCIA": "Valencia",
+        "VILLARREAL": "Villarreal",
+        "REAL BETIS": "Real Betis",
+        "REAL SOCIEDAD": "Real Sociedad",
 
         "ARSENAL": "Arsenal",
         "CHELSEA": "Chelsea",
         "LIVERPOOL": "Liverpool",
+
         "MAN UTD": "Manchester United",
         "MANCHESTER UNITED": "Manchester United",
+
         "MAN CITY": "Manchester City",
         "MANCHESTER CITY": "Manchester City",
+
         "TOTTENHAM": "Tottenham Hotspur",
         "SPURS": "Tottenham Hotspur",
+
         "NEWCASTLE": "Newcastle United",
-        "WEST HAM": "West Ham United",
-        "ASTON VILLA": "Aston Villa",
-        "CRYSTAL PALACE": "Crystal Palace",
-        "EVERTON": "Everton",
-        "FULHAM": "Fulham",
-        "BRENTFORD": "Brentford",
-        "BRIGHTON": "Brighton",
-        "WOLVES": "Wolverhampton Wanderers",
-        "WOLVERHAMPTON": "Wolverhampton Wanderers",
-        "FOREST": "Nottingham Forest",
-        "NOTTINGHAM FOREST": "Nottingham Forest",
-        "LEEDS": "Leeds United",
-        "LEEDS UNITED": "Leeds United",
-        "BURNLEY": "Burnley",
-        "SUNDERLAND": "Sunderland",
-        "BOURNEMOUTH": "AFC Bournemouth",
-        "WEST BROM": "West Bromwich Albion",
-        "COVENTRY": "Coventry City",
-        "HULL": "Hull City",
-        "IPSWICH": "Ipswich Town",
-        "NORWICH": "Norwich City",
-        "SHEFFIELD UNITED": "Sheffield United",
-        "SHEFFIELD WED": "Sheffield Wednesday",
-        "MIDDLESBROUGH": "Middlesbrough",
-        "BLACKBURN": "Blackburn Rovers",
-        "WATFORD": "Watford",
-        "QPR": "Queens Park Rangers",
-        "STOKE": "Stoke City",
-        "SOUTHAMPTON": "Southampton",
-        "SWANSEA": "Swansea City",
-        "CARDIFF": "Cardiff City",
-        "MILLWALL": "Millwall",
-        "DERBY": "Derby County",
-        "PRESTON": "Preston North End",
-        "SUNDERLAND": "Sunderland",
-
-
-        // =========================
-        // SPAIN
-        // =========================
-
-        "REAL MADRID": "Real Madrid",
-        "BARCELONA": "Barcelona",
-        "ATLETICO": "Atletico Madrid",
-        "ATL. MADRID": "Atletico Madrid",
-        "ATL MADRID": "Atletico Madrid",
-        "ATHLETIC CLUB": "Athletic Club",
-        "ATHLETIC BILBAO": "Athletic Club",
-        "REAL SOCIEDAD": "Real Sociedad",
-        "REAL BETIS": "Real Betis",
-        "SEVILLA": "Sevilla",
-        "VALENCIA": "Valencia",
-        "VILLARREAL": "Villarreal",
-        "CELTA": "Celta Vigo",
-        "CELTA VIGO": "Celta Vigo",
-        "GETAFE": "Getafe",
-        "OSASUNA": "Osasuna",
-        "MALLORCA": "Mallorca",
-        "RAYO": "Rayo Vallecano",
-        "RAYO VALLECANO": "Rayo Vallecano",
-        "ESPANYOL": "Espanyol",
-        "ALAVES": "Deportivo Alaves",
-        "ALAVÉS": "Deportivo Alaves",
-        "GIRONA": "Girona",
-        "LAS PALMAS": "Las Palmas",
-        "LEGANES": "Leganes",
-        "LEVANTE": "Levante",
-        "MALAGA": "Malaga",
-        "MÁLAGA": "Malaga",
-        "VALLADOLID": "Real Valladolid",
-        "EIBAR": "Eibar",
-        "ZARAGOZA": "Real Zaragoza",
-        "SPORTING GIJON": "Sporting Gijon",
-
-
-        // =========================
-        // ITALY
-        // =========================
 
         "JUVENTUS": "Juventus",
         "INTER": "Inter Milan",
         "INTER MILAN": "Inter Milan",
-        "AC MILAN": "AC Milan",
+
         "MILAN": "AC Milan",
-        "NAPOLI": "Napoli",
+        "AC MILAN": "AC Milan",
+
         "ROMA": "AS Roma",
         "AS ROMA": "AS Roma",
+
+        "NAPOLI": "Napoli",
         "LAZIO": "Lazio",
         "ATALANTA": "Atalanta",
-        "FIORENTINA": "Fiorentina",
-        "BOLOGNA": "Bologna",
-        "TORINO": "Torino",
-        "GENOA": "Genoa",
-        "UDINESE": "Udinese",
-        "CAGLIARI": "Cagliari",
-        "LECCE": "Lecce",
-        "MONZA": "Monza",
-        "PARMA": "Parma",
-        "COMO": "Como",
-        "VENEZIA": "Venezia",
-        "SASSUOLO": "Sassuolo",
-        "EMPOLI": "Empoli",
-        "PISA": "Pisa",
-        "SPEZIA": "Spezia",
-        "SAMPDORIA": "Sampdoria",
-
-
-        // =========================
-        // GERMANY
-        // =========================
 
         "BAYERN": "Bayern Munich",
         "BAYERN MUNICH": "Bayern Munich",
-        "BAYERN MÜNCHEN": "Bayern Munich",
+
         "DORTMUND": "Borussia Dortmund",
         "BORUSSIA DORTMUND": "Borussia Dortmund",
+
         "LEVERKUSEN": "Bayer Leverkusen",
         "RB LEIPZIG": "RB Leipzig",
-        "LEIPZIG": "RB Leipzig",
-        "EINTRACHT": "Eintracht Frankfurt",
-        "WOLFSBURG": "VfL Wolfsburg",
-        "FREIBURG": "SC Freiburg",
-        "MAINZ": "Mainz",
-        "WERDER BREMEN": "Werder Bremen",
-        "BORUSSIA MGLADBACH": "Borussia Monchengladbach",
-        "GLADBACH": "Borussia Monchengladbach",
-        "HOFFENHEIM": "Hoffenheim",
-        "STUTTGART": "VfB Stuttgart",
-        "UNION BERLIN": "Union Berlin",
-        "AUGSBURG": "FC Augsburg",
-        "HEIDENHEIM": "Heidenheim",
-        "ST PAULI": "St Pauli",
-        "KOLN": "FC Koln",
-        "KÖLN": "FC Koln",
-
-
-        // =========================
-        // FRANCE
-        // =========================
 
         "PSG": "Paris Saint-Germain",
         "PARIS SG": "Paris Saint-Germain",
-        "PARIS SAINT-GERMAIN": "Paris Saint-Germain",
+
         "MARSEILLE": "Marseille",
         "LYON": "Lyon",
         "MONACO": "Monaco",
-        "LILLE": "Lille",
-        "NICE": "Nice",
-        "RENNES": "Rennes",
-        "NANTES": "Nantes",
-        "BORDEAUX": "Bordeaux",
-        "TOULOUSE": "Toulouse",
-        "MONTPELLIER": "Montpellier",
-        "STRASBOURG": "Strasbourg",
-        "LENS": "Lens",
-        "BREST": "Brest",
-        "AUXERRE": "Auxerre",
-        "REIMS": "Reims",
-        "SAINT-ETIENNE": "Saint-Etienne",
-
-
-        // =========================
-        // NETHERLANDS
-        // =========================
 
         "AJAX": "Ajax",
         "PSV": "PSV Eindhoven",
         "FEYENOORD": "Feyenoord",
-        "AZ": "AZ Alkmaar",
-        "TWENTE": "FC Twente",
-        "UTRECHT": "FC Utrecht",
-        "VITESSE": "Vitesse",
-        "HEERENVEEN": "Heerenveen",
-        "GRONINGEN": "Groningen",
-        "NEC": "NEC Nijmegen",
-
-
-        // =========================
-        // PORTUGAL
-        // =========================
 
         "BENFICA": "Benfica",
         "PORTO": "FC Porto",
         "SPORTING": "Sporting CP",
-        "BRAGA": "Sporting Braga",
-        "VITORIA GUIMARAES": "Vitoria Guimaraes",
-        "BOAVISTA": "Boavista",
-        "FAMALICAO": "Famalicao",
-
-
-        // =========================
-        // TURKEY
-        // =========================
 
         "GALATASARAY": "Galatasaray",
         "FENERBAHCE": "Fenerbahce",
         "BESIKTAS": "Besiktas",
-        "TRABZONSPOR": "Trabzonspor",
-        "BASAKSEHIR": "Istanbul Basaksehir",
-        "KASIMPASA": "Kasimpasa",
-
-
-        // =========================
-        // SCOTLAND
-        // =========================
 
         "CELTIC": "Celtic",
         "RANGERS": "Rangers",
-        "HEARTS": "Heart of Midlothian",
-        "HIBERNIAN": "Hibernian",
-        "ABERDEEN": "Aberdeen",
-
-
-        // =========================
-        // SAUDI ARABIA
-        // =========================
 
         "AL HILAL": "Al Hilal",
-        "AL-NASSR": "Al Nassr",
         "AL NASSR": "Al Nassr",
+        "AL-NASSR": "Al Nassr",
+
         "AL AHLI": "Al Ahli",
         "AL ITTIHAD": "Al Ittihad",
-        "AL SHABAB": "Al Shabab",
-        "AL ETTIFAQ": "Al Ettifaq",
 
-
-        // =========================
-        // USA
-        // =========================
-
-        "LA GALAXY": "LA Galaxy",
         "INTER MIAMI": "Inter Miami",
-        "MIAMI": "Inter Miami",
-        "NYCFC": "New York City FC",
-        "NEW YORK CITY": "New York City FC",
-        "NEW YORK RED BULLS": "New York Red Bulls",
-        "ATLANTA UNITED": "Atlanta United",
-        "SEATTLE": "Seattle Sounders",
-        "PORTLAND": "Portland Timbers",
-        "ORLANDO CITY": "Orlando City",
-
-
-        // =========================
-        // JAPAN
-        // =========================
-
-        "KASHIMA": "Kashima Antlers",
-        "URAWA": "Urawa Red Diamonds",
-        "KAWASAKI": "Kawasaki Frontale",
-        "YOKOHAMA FM": "Yokohama F. Marinos",
-        "FC TOKYO": "FC Tokyo",
-        "GAMBA OSAKA": "Gamba Osaka",
-        "VISSEL KOBE": "Vissel Kobe",
-
-
-        // =========================
-        // SOUTH KOREA
-        // =========================
-
-        "JEONBUK": "Jeonbuk Hyundai Motors",
-        "ULSAN": "Ulsan Hyundai",
-        "SEOUL": "FC Seoul",
-        "SUWON": "Suwon Samsung Bluewings",
-        "POHANG": "Pohang Steelers",
-
-
-        // =========================
-        // BRAZIL
-        // =========================
 
         "FLAMENGO": "Flamengo",
         "PALMEIRAS": "Palmeiras",
         "CORINTHIANS": "Corinthians",
-        "SAO PAULO": "Sao Paulo",
-        "SÃO PAULO": "Sao Paulo",
         "SANTOS": "Santos",
-        "GREMIO": "Gremio",
-        "GRÊMIO": "Gremio",
-        "INTERNACIONAL": "Internacional",
-        "ATLETICO-MG": "Atletico Mineiro",
-        "CRUZEIRO": "Cruzeiro",
-        "VASCO": "Vasco da Gama",
-        "BOTAFOGO": "Botafogo",
-
-
-        // =========================
-        // ARGENTINA
-        // =========================
 
         "RIVER PLATE": "River Plate",
         "BOCA": "Boca Juniors",
         "BOCA JUNIORS": "Boca Juniors",
-        "RACING": "Racing Club",
-        "INDEPENDIENTE": "Independiente",
-        "SAN LORENZO": "San Lorenzo",
-        "ESTUDIANTES": "Estudiantes",
-        "ROSARIO CENTRAL": "Rosario Central",
 
+        "JAPAN": "Japan",
+        "SOUTH KOREA": "South Korea",
+        "AUSTRALIA": "Australia",
 
-        // =========================
-        // BELGIUM
-        // =========================
-
-        "ANDERLECHT": "Anderlecht",
-        "CLUB BRUGGE": "Club Brugge",
-        "GENK": "Genk",
-        "GENT": "Gent",
-        "STANDARD LIEGE": "Standard Liege",
-        "UNION SG": "Union Saint-Gilloise",
-
-
-        // =========================
-        // GREECE
-        // =========================
-
-        "OLYMPIACOS": "Olympiacos",
-        "PANATHINAIKOS": "Panathinaikos",
-        "AEK": "AEK Athens",
-        "PAOK": "PAOK",
-        "ARIS": "Aris",
-
-
-        // =========================
-        // ISRAEL
-        // =========================
-
-        "M. TEL-AVIV": "Maccabi Tel Aviv",
-        "MACCABI TEL AVIV": "Maccabi Tel Aviv",
-        "H. BE'ER SHEVA": "Hapoel Be'er Sheva",
-        "HAPOEL BEER SHEVA": "Hapoel Be'er Sheva",
-        "MACCABI HAIFA": "Maccabi Haifa",
-        "HAPOEL TEL AVIV": "Hapoel Tel Aviv",
-
-
-        // =========================
-        // CROATIA
-        // =========================
-
-        "DINAMO ZAGREB": "Dinamo Zagreb",
-        "HAJDUK": "Hajduk Split",
-        "HAJDUK SPLIT": "Hajduk Split",
-        "RIJEKA": "Rijeka",
-        "OSijek": "Osijek",
-
-
-        // =========================
-        // SERBIA
-        // =========================
-
-        "CRVENA ZVEZDA": "Red Star Belgrade",
-        "RED STAR": "Red Star Belgrade",
-        "PARTIZAN": "Partizan Belgrade",
-
-
-        // =========================
-        // POLAND
-        // =========================
-
-        "LECH": "Lech Poznan",
-        "LECH POZNAN": "Lech Poznan",
-        "LEGIA": "Legia Warsaw",
-        "JAGIELLONIA": "Jagiellonia Bialystok",
-        "RAKOW": "Rakow Czestochowa",
-
-
-        // =========================
-        // CYPRUS
-        // =========================
-
-        "APOEL": "APOEL",
-        "OMONOIA": "Omonia",
-        "PAPHOS": "Pafos FC",
-
-
-        // =========================
-        // CZECH
-        // =========================
-
-        "SPARTA PRAGUE": "Sparta Prague",
-        "SLAVIA PRAGUE": "Slavia Prague",
-        "PLZEN": "Viktoria Plzen",
-
-
-        // =========================
-        // AUSTRIA
-        // =========================
-
-        "SALZBURG": "Red Bull Salzburg",
-        "RAPID VIENNA": "Rapid Vienna",
-        "AUSTRIA VIENNA": "Austria Vienna",
-        "STURM GRAZ": "Sturm Graz",
-
-
-        // =========================
-        // SWITZERLAND
-        // =========================
-
-        "BASEL": "FC Basel",
-        "YOUNG BOYS": "Young Boys",
-        "ZURICH": "FC Zurich",
-        "SERVETTE": "Servette",
-
-
-        // =========================
-        // DENMARK
-        // =========================
-
-        "FC COPENHAGEN": "FC Copenhagen",
-        "MIDTJYLLAND": "FC Midtjylland",
-        "BRONDBY": "Brondby",
-        "NORDSJAELLAND": "Nordsjaelland",
-
-
-        // =========================
-        // NORWAY
-        // =========================
-
-        "BODO/GLIMT": "Bodo/Glimt",
-        "BODO GLIMT": "Bodo/Glimt",
-        "MOLDE": "Molde",
-        "ROSENBORG": "Rosenborg",
-        "VIKING": "Viking FK",
-        "VÍKINGUR": "Vikingur",
-
-
-        // =========================
-        // SWEDEN
-        // =========================
-
-        "MALMO": "Malmo FF",
-        "MALMÖ": "Malmo FF",
-        "AIK": "AIK",
-        "HAMMARBY": "Hammarby",
-        "DJURGARDEN": "Djurgardens IF",
-
-
-        // =========================
-        // FINLAND
-        // =========================
-
-        "KUPS": "KuPS",
-        "HJK": "HJK Helsinki",
-        "ILVES": "Ilves",
-        "SJK": "SJK",
-
-
-        // =========================
-        // ROMANIA
-        // =========================
-
-        "FCSB": "FCSB",
-        "CLUJ": "CFR Cluj",
-        "RAPID BUCURESTI": "Rapid Bucuresti",
-        "UNIVERSITATEA CRAIOVA": "Universitatea Craiova",
-
-
-        // =========================
-        // BULGARIA
-        // =========================
-
-        "LUDOGORETS": "Ludogorets",
-        "CSKA SOFIA": "CSKA Sofia",
-        "LEVSKI SOFIA": "Levski Sofia",
-
-
-        // =========================
-        // UKRAINE
-        // =========================
-
-        "SHAKHTAR": "Shakhtar Donetsk",
-        "DYNAMO KYIV": "Dynamo Kyiv",
-        "DINAMO KIEV": "Dynamo Kyiv",
-
-
-        // =========================
-        // USA / CANADA
-        // =========================
-
-        "TORONTO FC": "Toronto FC",
-        "VANCOUVER": "Vancouver Whitecaps",
-        "MONTREAL": "CF Montreal",
-
-
-        // =========================
-        // ASEAN
-        // =========================
-
-        "INDONESIA": "Indonesia",
-        "THAILAND": "Thailand",
-        "VIETNAM": "Vietnam",
-        "MALAYSIA": "Malaysia",
-        "SINGAPORE": "Singapore",
-        "PHILIPPINES": "Philippines",
-        "MYANMAR": "Myanmar",
-        "CAMBODIA": "Cambodia",
-        "LAOS": "Laos",
-        "TIMOR-LESTE": "Timor-Leste",
-        "TIMOR LESTE": "Timor-Leste",
-        "BRUNEI": "Brunei",
-        "BRUNEI DARUSSALAM": "Brunei",
-        "ASEAN": "ASEAN All Stars",
-
-
-        // =========================
-        // NATIONAL TEAMS - EUROPE
-        // =========================
+        "BRAZIL": "Brazil",
+        "ARGENTINA": "Argentina",
+        "URUGUAY": "Uruguay",
+        "CHILE": "Chile",
+        "COLOMBIA": "Colombia",
 
         "ENGLAND": "England",
         "FRANCE": "France",
         "SPAIN": "Spain",
         "GERMANY": "Germany",
         "ITALY": "Italy",
-        "PORTUGAL": "Portugal",
-        "NETHERLANDS": "Netherlands",
-        "BELGIUM": "Belgium",
-        "CROATIA": "Croatia",
-        "SERBIA": "Serbia",
-        "SWITZERLAND": "Switzerland",
-        "AUSTRIA": "Austria",
-        "DENMARK": "Denmark",
-        "SWEDEN": "Sweden",
-        "NORWAY": "Norway",
-        "FINLAND": "Finland",
-        "POLAND": "Poland",
-        "CZECH REPUBLIC": "Czech Republic",
-        "CZECHIA": "Czech Republic",
-        "GREECE": "Greece",
-        "TURKEY": "Turkey",
-        "SCOTLAND": "Scotland",
-        "WALES": "Wales",
-        "IRELAND": "Ireland",
-        "UKRAINE": "Ukraine",
-        "ROMANIA": "Romania",
-        "BULGARIA": "Bulgaria",
-        "HUNGARY": "Hungary",
-        "SLOVAKIA": "Slovakia",
-        "SLOVENIA": "Slovenia",
-        "ALBANIA": "Albania",
-        "GEORGIA": "Georgia",
-        "ARMENIA": "Armenia",
-        "ICELAND": "Iceland",
-        "ISRAEL": "Israel",
-        "BOSNIA": "Bosnia-Herzegovina",
-        "MONTENEGRO": "Montenegro",
-        "NORTH MACEDONIA": "North Macedonia",
-        "KOSOVO": "Kosovo",
-
-
-        // =========================
-        // NATIONAL TEAMS - ASIA
-        // =========================
-
-        "JAPAN": "Japan",
-        "SOUTH KOREA": "South Korea",
-        "KOREA REPUBLIC": "South Korea",
-        "CHINA": "China",
-        "AUSTRALIA": "Australia",
-        "IRAN": "Iran",
-        "IRAQ": "Iraq",
-        "SAUDI ARABIA": "Saudi Arabia",
-        "QATAR": "Qatar",
-        "UAE": "United Arab Emirates",
-        "UNITED ARAB EMIRATES": "United Arab Emirates",
-        "UZBEKISTAN": "Uzbekistan",
-        "JORDAN": "Jordan",
-        "OMAN": "Oman",
-        "BAHRAIN": "Bahrain",
-        "KUWAIT": "Kuwait",
-        "PALESTINE": "Palestine",
-        "SYRIA": "Syria",
-        "LEBANON": "Lebanon",
-        "INDIA": "India",
-        "NORTH KOREA": "North Korea",
-
-
-        // =========================
-        // NATIONAL TEAMS - AFRICA
-        // =========================
-
-        "EGYPT": "Egypt",
-        "MOROCCO": "Morocco",
-        "ALGERIA": "Algeria",
-        "TUNISIA": "Tunisia",
-        "SENEGAL": "Senegal",
-        "NIGERIA": "Nigeria",
-        "GHANA": "Ghana",
-        "CAMEROON": "Cameroon",
-        "IVORY COAST": "Ivory Coast",
-        "COTE D'IVOIRE": "Ivory Coast",
-        "SOUTH AFRICA": "South Africa",
-        "MALI": "Mali",
-        "DR CONGO": "DR Congo",
-        "CONGO DR": "DR Congo",
-        "ZAMBIA": "Zambia",
-        "ANGOLA": "Angola",
-        "CAPE VERDE": "Cape Verde",
-        "BURKINA FASO": "Burkina Faso",
-        "GUINEA": "Guinea",
-
-
-        // =========================
-        // NATIONAL TEAMS - AMERICA
-        // =========================
-
-        "BRAZIL": "Brazil",
-        "ARGENTINA": "Argentina",
-        "URUGUAY": "Uruguay",
-        "COLOMBIA": "Colombia",
-        "CHILE": "Chile",
-        "ECUADOR": "Ecuador",
-        "PERU": "Peru",
-        "PARAGUAY": "Paraguay",
-        "BOLIVIA": "Bolivia",
-        "VENEZUELA": "Venezuela",
-        "MEXICO": "Mexico",
-        "USA": "United States",
-        "UNITED STATES": "United States",
-        "CANADA": "Canada",
-        "COSTA RICA": "Costa Rica",
-        "PANAMA": "Panama",
-        "JAMAICA": "Jamaica",
-        "HONDURAS": "Honduras",
-        "HAITI": "Haiti",
-
-
-        // =========================
-        // OCEANIA
-        // =========================
-
-        "NEW ZEALAND": "New Zealand",
-        "FIJI": "Fiji",
-        "SOLOMON ISLANDS": "Solomon Islands",
-        "TAHITI": "Tahiti"
+        "PORTUGAL": "Portugal"
 
     };
 
 
-    // =========================================================
-    // CACHE SYSTEM
-    // =========================================================
+    // =====================================================
+    // NORMALIZE
+    // =====================================================
 
-    const memoryCache = {};
+    function normalize(name) {
 
-    const pendingRequests = {};
-
-    const CACHE_PREFIX = "wc_team_logo_";
-
-    // Logo disimpan 30 hari
-    const CACHE_TIME =
-        30 * 24 * 60 * 60 * 1000;
-
-
-    // =========================================================
-    // NORMALIZE TEAM NAME
-    // =========================================================
-
-    function normalizeTeamName(name) {
-
-        return name
+        return String(name || "")
             .trim()
             .replace(/\s+/g, " ")
-            .toUpperCase();
+            .toUpperCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
 
     }
 
 
-    // =========================================================
-    // GET LOGO
-    // =========================================================
+    // =====================================================
+    // NORMALIZED ALIAS
+    // =====================================================
 
-    async function getTeamLogo(teamName) {
+    const alias = {};
 
-        const cleanName =
-            teamName.trim();
+    Object.keys(teamAlias).forEach(function (key) {
 
-        const normalizedName =
-            normalizeTeamName(cleanName);
+        alias[normalize(key)] =
+            teamAlias[key];
 
-
-        if (!cleanName) {
-            return fallbackLogo;
-        }
+    });
 
 
-        // =====================================================
-        // MEMORY CACHE
-        // =====================================================
+    // =====================================================
+    // MEMORY CACHE
+    // =====================================================
 
-        if (memoryCache[normalizedName]) {
+    const memoryCache = {};
 
-            return memoryCache[normalizedName];
-
-        }
+    const pending = {};
 
 
-        // =====================================================
-        // LOCAL STORAGE
-        // =====================================================
+    // =====================================================
+    // LOCAL STORAGE
+    // =====================================================
+
+    function getCache(name) {
 
         try {
 
-            const stored =
-                localStorage.getItem(
-                    CACHE_PREFIX + normalizedName
-                );
+            const key =
+                CACHE_PREFIX +
+                normalize(name);
 
+            const data =
+                localStorage.getItem(key);
 
-            if (stored) {
+            if (!data) {
+                return null;
+            }
 
-                const parsed =
-                    JSON.parse(stored);
+            const parsed =
+                JSON.parse(data);
 
+            if (
+                parsed &&
+                parsed.logo &&
+                parsed.time &&
+                Date.now() - parsed.time <
+                    CACHE_TIME
+            ) {
 
-                if (
-                    parsed &&
-                    parsed.logo &&
-                    parsed.time &&
-                    Date.now() - parsed.time <
-                        CACHE_TIME
-                ) {
-
-                    memoryCache[normalizedName] =
-                        parsed.logo;
-
-                    return parsed.logo;
-
-                }
-
-
-                // Cache expired
-                localStorage.removeItem(
-                    CACHE_PREFIX + normalizedName
-                );
+                return parsed.logo;
 
             }
 
-        } catch (error) {
+            localStorage.removeItem(key);
 
-            console.warn(
-                "Cache read error:",
-                error
+        } catch (e) {}
+
+        return null;
+
+    }
+
+
+    function saveCache(
+        name,
+        logo
+    ) {
+
+        try {
+
+            localStorage.setItem(
+
+                CACHE_PREFIX +
+                normalize(name),
+
+                JSON.stringify({
+                    logo: logo,
+                    time: Date.now()
+                })
+
+            );
+
+        } catch (e) {}
+
+    }
+
+
+    // =====================================================
+    // GET LOGO
+    // =====================================================
+
+    function getLogo(teamName) {
+
+        const normalized =
+            normalize(teamName);
+
+        if (!normalized) {
+
+            return Promise.resolve(
+                fallbackLogo
             );
 
         }
 
 
-        // =====================================================
-        // PREVENT DUPLICATE REQUEST
-        // =====================================================
+        // MEMORY
 
         if (
-            pendingRequests[normalizedName]
+            memoryCache[normalized]
         ) {
 
-            return pendingRequests[
-                normalizedName
+            return Promise.resolve(
+                memoryCache[normalized]
+            );
+
+        }
+
+
+        // LOCAL STORAGE
+
+        const cached =
+            getCache(normalized);
+
+        if (cached) {
+
+            memoryCache[
+                normalized
+            ] = cached;
+
+            return Promise.resolve(
+                cached
+            );
+
+        }
+
+
+        // REQUEST SEDANG BERJALAN
+
+        if (
+            pending[normalized]
+        ) {
+
+            return pending[
+                normalized
             ];
 
         }
 
 
-        // =====================================================
         // ALIAS
-        // =====================================================
 
         const searchName =
-            teamAlias[normalizedName] ||
-            cleanName;
+            alias[normalized] ||
+            teamName;
 
 
-        // =====================================================
-        // API REQUEST
-        // =====================================================
+        // API
 
-        pendingRequests[normalizedName] =
-            (async function () {
+        pending[normalized] =
+            fetch(
+                API +
+                encodeURIComponent(
+                    searchName
+                )
+            )
 
-                try {
+            .then(function (response) {
 
-                    const response =
-                        await fetch(
-                            API +
-                            encodeURIComponent(
-                                searchName
-                            ),
-                            {
-                                method: "GET",
-                                cache: "force-cache"
-                            }
-                        );
+                if (!response.ok) {
 
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            "API Error: " +
-                            response.status
-                        );
-
-                    }
-
-
-                    const data =
-                        await response.json();
-
-
-                    // =================================================
-                    // TEAM FOUND
-                    // =================================================
-
-                    if (
-                        data &&
-                        Array.isArray(
-                            data.teams
-                        ) &&
-                        data.teams.length > 0
-                    ) {
-
-                        const team =
-                            data.teams[0];
-
-
-                        const logo =
-                            team.strBadge ||
-                            team.strLogo ||
-                            team.strTeamBadge;
-
-
-                        if (logo) {
-
-                            // Memory cache
-                            memoryCache[
-                                normalizedName
-                            ] = logo;
-
-
-                            // LocalStorage
-                            try {
-
-                                localStorage.setItem(
-                                    CACHE_PREFIX +
-                                    normalizedName,
-                                    JSON.stringify({
-                                        logo: logo,
-                                        time: Date.now()
-                                    })
-                                );
-
-                            } catch (storageError) {
-
-                                console.warn(
-                                    "LocalStorage penuh:",
-                                    storageError
-                                );
-
-                            }
-
-
-                            return logo;
-
-                        }
-
-                    }
-
-
-                } catch (error) {
-
-                    console.warn(
-                        "Logo gagal:",
-                        cleanName,
-                        error
+                    throw new Error(
+                        "API Error"
                     );
-
-                } finally {
-
-                    delete pendingRequests[
-                        normalizedName
-                    ];
 
                 }
 
+                return response.json();
+
+            })
+
+            .then(function (data) {
+
+                if (
+                    data &&
+                    data.teams &&
+                    data.teams.length
+                ) {
+
+                    const team =
+                        data.teams[0];
+
+                    const logo =
+                        team.strBadge ||
+                        team.strLogo ||
+                        team.strTeamBadge;
+
+                    if (logo) {
+
+                        memoryCache[
+                            normalized
+                        ] = logo;
+
+                        saveCache(
+                            normalized,
+                            logo
+                        );
+
+                        return logo;
+
+                    }
+
+                }
 
                 return fallbackLogo;
 
-            })();
+            })
+
+            .catch(function () {
+
+                return fallbackLogo;
+
+            })
+
+            .finally(function () {
+
+                delete pending[
+                    normalized
+                ];
+
+            });
 
 
-        return pendingRequests[
-            normalizedName
+        return pending[
+            normalized
         ];
 
     }
 
 
-    // =========================================================
-    // LOAD LOGO SATU TEAM
-    // =========================================================
+    // =====================================================
+    // AMBIL NAMA TEAM
+    // =====================================================
 
-    async function loadSingleLogo(
-        image,
-        teamName
-    ) {
+    function getTeamName(img) {
+
+        // -----------------------------------------------
+        // FORMAT SWIPER
+        // data-team="Atletico Madrid"
+        // -----------------------------------------------
+
+        const dataTeam =
+            img.getAttribute(
+                "data-team"
+            );
 
         if (
-            !image ||
-            !teamName
+            dataTeam &&
+            dataTeam.trim()
         ) {
+
+            return dataTeam.trim();
+
+        }
+
+
+        // -----------------------------------------------
+        // FORMAT WC-CARD
+        // alt="GETAFE"
+        // -----------------------------------------------
+
+        const alt =
+            img.getAttribute("alt");
+
+        if (
+            alt &&
+            alt.trim()
+        ) {
+
+            return alt.trim();
+
+        }
+
+
+        // -----------------------------------------------
+        // FORMAT WC-CARD
+        // <div>GETAFE</div>
+        // -----------------------------------------------
+
+        const parent =
+            img.closest(".wc-team");
+
+        if (parent) {
+
+            const div =
+                parent.querySelector(
+                    "div:not(.wc-vs)"
+                );
+
+            if (
+                div &&
+                div.textContent.trim()
+            ) {
+
+                return div.textContent.trim();
+
+            }
+
+        }
+
+
+        return "";
+
+    }
+
+
+    // =====================================================
+    // LOAD LOGO
+    // =====================================================
+
+    function loadLogo(img) {
+
+        const teamName =
+            getTeamName(img);
+
+        if (!teamName) {
+
+            img.src =
+                fallbackLogo;
 
             return;
 
         }
 
 
-        // =====================================================
-        // FALLBACK LANGSUNG
-        // =====================================================
-
-        image.src =
-            fallbackLogo;
-
-        image.loading = "eager";
-
-        image.decoding = "async";
+        const normalized =
+            normalize(teamName);
 
 
-        try {
+        // -----------------------------------------------
+        // CACHE
+        // -----------------------------------------------
 
-            const logo =
-                await getTeamLogo(
-                    teamName
-                );
+        const cached =
+            memoryCache[normalized] ||
+            getCache(normalized);
 
 
-            if (
-                logo &&
-                image.isConnected
-            ) {
+        if (cached) {
 
-                image.src = logo;
+            memoryCache[
+                normalized
+            ] = cached;
 
-            }
+            img.src = cached;
 
-        } catch (error) {
-
-            image.src =
-                fallbackLogo;
+            return;
 
         }
+
+
+        // -----------------------------------------------
+        // FALLBACK LANGSUNG
+        // API TIDAK MEMBLOCK HTML
+        // -----------------------------------------------
+
+        img.src =
+            fallbackLogo;
+
+
+        // -----------------------------------------------
+        // REQUEST BACKGROUND
+        // -----------------------------------------------
+
+        getLogo(teamName)
+            .then(function (logo) {
+
+                if (
+                    img.isConnected &&
+                    logo
+                ) {
+
+                    img.src = logo;
+
+                }
+
+            });
 
     }
 
 
-    // =========================================================
-    // LOAD ALL LOGOS
-    // =========================================================
+    // =====================================================
+    // LOAD SEMUA FORMAT
+    // =====================================================
 
-    async function loadAllLogos() {
+    function loadAllLogos() {
 
-        const teams =
+        const images =
             document.querySelectorAll(
-                ".wc-team"
+                ".auto-team-logo"
             );
 
 
-        const requests = [];
+        images.forEach(function (img) {
+
+            img.loading =
+                "eager";
+
+            img.decoding =
+                "async";
+
+            img.width =
+                img.width || 45;
+
+            img.height =
+                img.height || 45;
 
 
-        teams.forEach(function (team) {
+            img.onerror =
+                function () {
 
-            const nameElement =
-                team.querySelector(
-                    ".team-name"
-                ) ||
-                team.querySelector(
-                    "div:not(.wc-team)"
-                );
+                    this.onerror =
+                        null;
 
+                    this.src =
+                        fallbackLogo;
 
-            const image =
-                team.querySelector(
-                    ".auto-team-logo"
-                );
+                };
 
 
-            if (
-                !image ||
-                !nameElement
-            ) {
-
-                return;
-
-            }
-
-
-            const teamName =
-                nameElement.textContent.trim();
-
-
-            // =================================================
-            // LOAD PARALLEL
-            // =================================================
-
-            requests.push(
-                loadSingleLogo(
-                    image,
-                    teamName
-                )
-            );
+            loadLogo(img);
 
         });
 
+    }
 
-        // =====================================================
-        // SEMUA REQUEST BERJALAN BERSAMA
-        // =====================================================
 
-        await Promise.allSettled(
-            requests
+    // =====================================================
+    // JALANKAN
+    // =====================================================
+
+    loadAllLogos();
+
+
+    // =====================================================
+    // UNTUK SWIPER / CONTENT DINAMIS
+    // =====================================================
+
+    const observer =
+        new MutationObserver(
+            function () {
+
+                loadAllLogos();
+
+            }
         );
 
-    }
 
-
-    // =========================================================
-    // IMAGE ERROR HANDLER
-    // =========================================================
-
-    document.addEventListener(
-        "error",
-        function (event) {
-
-            const target =
-                event.target;
-
-
-            if (
-                target &&
-                target.classList &&
-                target.classList.contains(
-                    "auto-team-logo"
-                )
-            ) {
-
-                if (
-                    target.src !==
-                    fallbackLogo
-                ) {
-
-                    target.src =
-                        fallbackLogo;
-
-                }
-
-            }
-
-        },
-        true
+    observer.observe(
+        document.body,
+        {
+            childList: true,
+            subtree: true
+        }
     );
-
-
-    // =========================================================
-    // OPTIONAL:
-    // CLEAR LOGO CACHE
-    //
-    // Jalankan:
-    // clearTeamLogoCache();
-    //
-    // jika ingin menghapus semua cache logo.
-    // =========================================================
-
-    window.clearTeamLogoCache =
-        function () {
-
-            try {
-
-                Object.keys(
-                    localStorage
-                ).forEach(function (key) {
-
-                    if (
-                        key.startsWith(
-                            CACHE_PREFIX
-                        )
-                    ) {
-
-                        localStorage.removeItem(
-                            key
-                        );
-
-                    }
-
-                });
-
-
-                Object.keys(
-                    memoryCache
-                ).forEach(function (key) {
-
-                    delete memoryCache[key];
-
-                });
-
-
-                console.log(
-                    "Team logo cache berhasil dibersihkan."
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "Gagal clear cache:",
-                    error
-                );
-
-            }
-
-        };
-
-
-    // =========================================================
-    // START
-    // =========================================================
-
-    loadAllLogos();
-
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const API = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=";
-
-    const fallbackLogo =
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Soccerball.svg/512px-Soccerball.svg.png";
-
-const teamAlias = {
-
-    /* =========================
-       ENGLAND
-    ========================= */
-
-    "ARSENAL": "Arsenal",
-    "CHELSEA": "Chelsea",
-    "LIVERPOOL": "Liverpool",
-    "MAN UTD": "Manchester United",
-    "MANCHESTER UNITED": "Manchester United",
-    "MAN CITY": "Manchester City",
-    "MANCHESTER CITY": "Manchester City",
-    "TOTTENHAM": "Tottenham Hotspur",
-    "SPURS": "Tottenham Hotspur",
-    "NEWCASTLE": "Newcastle United",
-    "WEST HAM": "West Ham United",
-    "ASTON VILLA": "Aston Villa",
-    "CRYSTAL PALACE": "Crystal Palace",
-    "EVERTON": "Everton",
-    "FULHAM": "Fulham",
-    "BRENTFORD": "Brentford",
-    "BRIGHTON": "Brighton",
-    "WOLVES": "Wolverhampton Wanderers",
-    "WOLVERHAMPTON": "Wolverhampton Wanderers",
-    "FOREST": "Nottingham Forest",
-    "NOTTINGHAM FOREST": "Nottingham Forest",
-    "LEEDS": "Leeds United",
-    "LEEDS UNITED": "Leeds United",
-    "BURNLEY": "Burnley",
-    "SUNDERLAND": "Sunderland",
-    "BOURNEMOUTH": "AFC Bournemouth",
-    "WEST BROM": "West Bromwich Albion",
-    "COVENTRY": "Coventry City",
-    "HULL": "Hull City",
-    "IPSWICH": "Ipswich Town",
-    "NORWICH": "Norwich City",
-    "SHEFFIELD UNITED": "Sheffield United",
-    "SHEFFIELD WED": "Sheffield Wednesday",
-    "MIDDLESBROUGH": "Middlesbrough",
-    "BLACKBURN": "Blackburn Rovers",
-    "WATFORD": "Watford",
-    "QPR": "Queens Park Rangers",
-    "STOKE": "Stoke City",
-    "SOUTHAMPTON": "Southampton",
-    "SWANSEA": "Swansea City",
-    "CARDIFF": "Cardiff City",
-    "MILLWALL": "Millwall",
-    "DERBY": "Derby County",
-    "PRESTON": "Preston North End",
-    "SUNDERLAND": "Sunderland",
-
-
-    /* =========================
-       SPAIN
-    ========================= */
-
-    "REAL MADRID": "Real Madrid",
-    "BARCELONA": "Barcelona",
-    "ATLETICO": "Atletico Madrid",
-    "ATL. MADRID": "Atletico Madrid",
-    "ATL MADRID": "Atletico Madrid",
-    "ATHLETIC CLUB": "Athletic Club",
-    "ATHLETIC BILBAO": "Athletic Club",
-    "REAL SOCIEDAD": "Real Sociedad",
-    "REAL BETIS": "Real Betis",
-    "SEVILLA": "Sevilla",
-    "VALENCIA": "Valencia",
-    "VILLARREAL": "Villarreal",
-    "CELTA": "Celta Vigo",
-    "CELTA VIGO": "Celta Vigo",
-    "GETAFE": "Getafe",
-    "OSASUNA": "Osasuna",
-    "MALLORCA": "Mallorca",
-    "RAYO": "Rayo Vallecano",
-    "RAYO VALLECANO": "Rayo Vallecano",
-    "ESPANYOL": "Espanyol",
-    "ALAVES": "Deportivo Alaves",
-    "ALAVÉS": "Deportivo Alaves",
-    "GIRONA": "Girona",
-    "LAS PALMAS": "Las Palmas",
-    "LEGANES": "Leganes",
-    "LEVANTE": "Levante",
-    "MALAGA": "Malaga",
-    "MÁLAGA": "Malaga",
-    "VALLADOLID": "Real Valladolid",
-    "EIBAR": "Eibar",
-    "ZARAGOZA": "Real Zaragoza",
-    "SPORTING GIJON": "Sporting Gijon",
-
-
-    /* =========================
-       ITALY
-    ========================= */
-
-    "JUVENTUS": "Juventus",
-    "INTER": "Inter Milan",
-    "INTER MILAN": "Inter Milan",
-    "AC MILAN": "AC Milan",
-    "MILAN": "AC Milan",
-    "NAPOLI": "Napoli",
-    "ROMA": "AS Roma",
-    "AS ROMA": "AS Roma",
-    "LAZIO": "Lazio",
-    "ATALANTA": "Atalanta",
-    "FIORENTINA": "Fiorentina",
-    "BOLOGNA": "Bologna",
-    "TORINO": "Torino",
-    "GENOA": "Genoa",
-    "UDINESE": "Udinese",
-    "CAGLIARI": "Cagliari",
-    "LECCE": "Lecce",
-    "MONZA": "Monza",
-    "PARMA": "Parma",
-    "COMO": "Como",
-    "VENEZIA": "Venezia",
-    "SASSUOLO": "Sassuolo",
-    "EMPOLI": "Empoli",
-    "PISA": "Pisa",
-    "SPEZIA": "Spezia",
-    "SAMPDORIA": "Sampdoria",
-
-
-    /* =========================
-       GERMANY
-    ========================= */
-
-    "BAYERN": "Bayern Munich",
-    "BAYERN MUNICH": "Bayern Munich",
-    "BAYERN MÜNCHEN": "Bayern Munich",
-    "DORTMUND": "Borussia Dortmund",
-    "BORUSSIA DORTMUND": "Borussia Dortmund",
-    "LEVERKUSEN": "Bayer Leverkusen",
-    "RB LEIPZIG": "RB Leipzig",
-    "LEIPZIG": "RB Leipzig",
-    "EINTRACHT": "Eintracht Frankfurt",
-    "WOLFSBURG": "VfL Wolfsburg",
-    "FREIBURG": "SC Freiburg",
-    "MAINZ": "Mainz",
-    "WERDER BREMEN": "Werder Bremen",
-    "BORUSSIA MGLADBACH": "Borussia Monchengladbach",
-    "GLADBACH": "Borussia Monchengladbach",
-    "HOFFENHEIM": "Hoffenheim",
-    "STUTTGART": "VfB Stuttgart",
-    "UNION BERLIN": "Union Berlin",
-    "AUGSBURG": "FC Augsburg",
-    "HEIDENHEIM": "Heidenheim",
-    "ST PAULI": "St Pauli",
-    "KOLN": "FC Koln",
-    "KÖLN": "FC Koln",
-
-
-    /* =========================
-       FRANCE
-    ========================= */
-
-    "PSG": "Paris Saint-Germain",
-    "PARIS SG": "Paris Saint-Germain",
-    "PARIS SAINT-GERMAIN": "Paris Saint-Germain",
-    "MARSEILLE": "Marseille",
-    "LYON": "Lyon",
-    "MONACO": "Monaco",
-    "LILLE": "Lille",
-    "NICE": "Nice",
-    "RENNES": "Rennes",
-    "NANTES": "Nantes",
-    "BORDEAUX": "Bordeaux",
-    "TOULOUSE": "Toulouse",
-    "MONTPELLIER": "Montpellier",
-    "STRASBOURG": "Strasbourg",
-    "LENS": "Lens",
-    "BREST": "Brest",
-    "AUXERRE": "Auxerre",
-    "REIMS": "Reims",
-    "SAINT-ETIENNE": "Saint-Etienne",
-
-
-    /* =========================
-       NETHERLANDS
-    ========================= */
-
-    "AJAX": "Ajax",
-    "PSV": "PSV Eindhoven",
-    "FEYENOORD": "Feyenoord",
-    "AZ": "AZ Alkmaar",
-    "TWENTE": "FC Twente",
-    "UTRECHT": "FC Utrecht",
-    "VITESSE": "Vitesse",
-    "HEERENVEEN": "Heerenveen",
-    "GRONINGEN": "Groningen",
-    "NEC": "NEC Nijmegen",
-
-
-    /* =========================
-       PORTUGAL
-    ========================= */
-
-    "BENFICA": "Benfica",
-    "PORTO": "FC Porto",
-    "SPORTING": "Sporting CP",
-    "BRAGA": "Sporting Braga",
-    "VITORIA GUIMARAES": "Vitoria Guimaraes",
-    "BOAVISTA": "Boavista",
-    "FAMALICAO": "Famalicao",
-
-
-    /* =========================
-       TURKEY
-    ========================= */
-
-    "GALATASARAY": "Galatasaray",
-    "FENERBAHCE": "Fenerbahce",
-    "BESIKTAS": "Besiktas",
-    "TRABZONSPOR": "Trabzonspor",
-    "BASAKSEHIR": "Istanbul Basaksehir",
-    "KASIMPASA": "Kasimpasa",
-
-
-    /* =========================
-       SCOTLAND
-    ========================= */
-
-    "CELTIC": "Celtic",
-    "RANGERS": "Rangers",
-    "HEARTS": "Heart of Midlothian",
-    "HIBERNIAN": "Hibernian",
-    "ABERDEEN": "Aberdeen",
-
-
-    /* =========================
-       SAUDI ARABIA
-    ========================= */
-
-    "AL HILAL": "Al Hilal",
-    "AL-NASSR": "Al Nassr",
-    "AL NASSR": "Al Nassr",
-    "AL AHLI": "Al Ahli",
-    "AL ITTIHAD": "Al Ittihad",
-    "AL SHABAB": "Al Shabab",
-    "AL ETTIFAQ": "Al Ettifaq",
-
-
-    /* =========================
-       USA
-    ========================= */
-
-    "LA GALAXY": "LA Galaxy",
-    "INTER MIAMI": "Inter Miami",
-    "MIAMI": "Inter Miami",
-    "NYCFC": "New York City FC",
-    "NEW YORK CITY": "New York City FC",
-    "NEW YORK RED BULLS": "New York Red Bulls",
-    "ATLANTA UNITED": "Atlanta United",
-    "SEATTLE": "Seattle Sounders",
-    "PORTLAND": "Portland Timbers",
-    "ORLANDO CITY": "Orlando City",
-
-
-    /* =========================
-       JAPAN
-    ========================= */
-
-    "KASHIMA": "Kashima Antlers",
-    "URAWA": "Urawa Red Diamonds",
-    "KAWASAKI": "Kawasaki Frontale",
-    "YOKOHAMA FM": "Yokohama F. Marinos",
-    "FC TOKYO": "FC Tokyo",
-    "GAMBA OSAKA": "Gamba Osaka",
-    "VISSEL KOBE": "Vissel Kobe",
-
-
-    /* =========================
-       SOUTH KOREA
-    ========================= */
-
-    "JEONBUK": "Jeonbuk Hyundai Motors",
-    "ULSAN": "Ulsan Hyundai",
-    "SEOUL": "FC Seoul",
-    "SUWON": "Suwon Samsung Bluewings",
-    "POHANG": "Pohang Steelers",
-
-
-    /* =========================
-       BRAZIL
-    ========================= */
-
-    "FLAMENGO": "Flamengo",
-    "PALMEIRAS": "Palmeiras",
-    "CORINTHIANS": "Corinthians",
-    "SAO PAULO": "Sao Paulo",
-    "SÃO PAULO": "Sao Paulo",
-    "SANTOS": "Santos",
-    "GREMIO": "Gremio",
-    "GRÊMIO": "Gremio",
-    "INTERNACIONAL": "Internacional",
-    "ATLETICO-MG": "Atletico Mineiro",
-    "CRUZEIRO": "Cruzeiro",
-    "VASCO": "Vasco da Gama",
-    "BOTAFOGO": "Botafogo",
-
-
-    /* =========================
-       ARGENTINA
-    ========================= */
-
-    "RIVER PLATE": "River Plate",
-    "BOCA": "Boca Juniors",
-    "BOCA JUNIORS": "Boca Juniors",
-    "RACING": "Racing Club",
-    "INDEPENDIENTE": "Independiente",
-    "SAN LORENZO": "San Lorenzo",
-    "ESTUDIANTES": "Estudiantes",
-    "ROSARIO CENTRAL": "Rosario Central",
-
-
-    /* =========================
-       BELGIUM
-    ========================= */
-
-    "ANDERLECHT": "Anderlecht",
-    "CLUB BRUGGE": "Club Brugge",
-    "GENK": "Genk",
-    "GENT": "Gent",
-    "STANDARD LIEGE": "Standard Liege",
-    "UNION SG": "Union Saint-Gilloise",
-
-
-    /* =========================
-       GREECE
-    ========================= */
-
-    "OLYMPIACOS": "Olympiacos",
-    "PANATHINAIKOS": "Panathinaikos",
-    "AEK": "AEK Athens",
-    "PAOK": "PAOK",
-    "ARIS": "Aris",
-
-
-    /* =========================
-       ISRAEL
-    ========================= */
-
-    "M. TEL-AVIV": "Maccabi Tel Aviv",
-    "MACCABI TEL AVIV": "Maccabi Tel Aviv",
-    "H. BE'ER SHEVA": "Hapoel Be'er Sheva",
-    "HAPOEL BEER SHEVA": "Hapoel Be'er Sheva",
-    "MACCABI HAIFA": "Maccabi Haifa",
-    "HAPOEL TEL AVIV": "Hapoel Tel Aviv",
-
-
-    /* =========================
-       CROATIA
-    ========================= */
-
-    "DINAMO ZAGREB": "Dinamo Zagreb",
-    "HAJDUK": "Hajduk Split",
-    "HAJDUK SPLIT": "Hajduk Split",
-    "RIJEKA": "Rijeka",
-    "OSijek": "Osijek",
-
-
-    /* =========================
-       SERBIA
-    ========================= */
-
-    "CRVENA ZVEZDA": "Red Star Belgrade",
-    "RED STAR": "Red Star Belgrade",
-    "PARTIZAN": "Partizan Belgrade",
-
-
-    /* =========================
-       POLAND
-    ========================= */
-
-    "LECH": "Lech Poznan",
-    "LECH POZNAN": "Lech Poznan",
-    "LEGIA": "Legia Warsaw",
-    "JAGIELLONIA": "Jagiellonia Bialystok",
-    "RAKOW": "Rakow Czestochowa",
-
-
-    /* =========================
-       CYPRUS
-    ========================= */
-
-    "APOEL": "APOEL",
-    "OMONOIA": "Omonia",
-    "PAPHOS": "Pafos FC",
-
-
-    /* =========================
-       CZECH
-    ========================= */
-
-    "SPARTA PRAGUE": "Sparta Prague",
-    "SLAVIA PRAGUE": "Slavia Prague",
-    "PLZEN": "Viktoria Plzen",
-
-
-    /* =========================
-       AUSTRIA
-    ========================= */
-
-    "SALZBURG": "Red Bull Salzburg",
-    "RAPID VIENNA": "Rapid Vienna",
-    "AUSTRIA VIENNA": "Austria Vienna",
-    "STURM GRAZ": "Sturm Graz",
-
-
-    /* =========================
-       SWITZERLAND
-    ========================= */
-
-    "BASEL": "FC Basel",
-    "YOUNG BOYS": "Young Boys",
-    "ZURICH": "FC Zurich",
-    "SERVETTE": "Servette",
-
-
-    /* =========================
-       DENMARK
-    ========================= */
-
-    "FC COPENHAGEN": "FC Copenhagen",
-    "MIDTJYLLAND": "FC Midtjylland",
-    "BRONDBY": "Brondby",
-    "NORDSJAELLAND": "Nordsjaelland",
-
-
-    /* =========================
-       NORWAY
-    ========================= */
-
-    "BODO/GLIMT": "Bodo/Glimt",
-    "BODO GLIMT": "Bodo/Glimt",
-    "MOLDE": "Molde",
-    "ROSENBORG": "Rosenborg",
-    "VIKING": "Viking FK",
-    "VÍKINGUR": "Vikingur",
-
-
-    /* =========================
-       SWEDEN
-    ========================= */
-
-    "MALMO": "Malmo FF",
-    "MALMÖ": "Malmo FF",
-    "AIK": "AIK",
-    "HAMMARBY": "Hammarby",
-    "DJURGARDEN": "Djurgardens IF",
-
-
-    /* =========================
-       FINLAND
-    ========================= */
-
-    "KUPS": "KuPS",
-    "HJK": "HJK Helsinki",
-    "ILVES": "Ilves",
-    "SJK": "SJK",
-
-
-    /* =========================
-       ROMANIA
-    ========================= */
-
-    "FCSB": "FCSB",
-    "CLUJ": "CFR Cluj",
-    "RAPID BUCURESTI": "Rapid Bucuresti",
-    "UNIVERSITATEA CRAIOVA": "Universitatea Craiova",
-
-
-    /* =========================
-       BULGARIA
-    ========================= */
-
-    "LUDOGORETS": "Ludogorets",
-    "CSKA SOFIA": "CSKA Sofia",
-    "LEVSKI SOFIA": "Levski Sofia",
-
-
-    /* =========================
-       UKRAINE
-    ========================= */
-
-    "SHAKHTAR": "Shakhtar Donetsk",
-    "DYNAMO KYIV": "Dynamo Kyiv",
-    "DINAMO KIEV": "Dynamo Kyiv",
-
-
-    /* =========================
-       USA / CANADA
-    ========================= */
-
-    "TORONTO FC": "Toronto FC",
-    "VANCOUVER": "Vancouver Whitecaps",
-    "MONTREAL": "CF Montreal",
-
-
-    /* =========================
-       ASEAN
-    ========================= */
-
-    "INDONESIA": "Indonesia",
-    "THAILAND": "Thailand",
-    "VIETNAM": "Vietnam",
-    "MALAYSIA": "Malaysia",
-    "SINGAPORE": "Singapore",
-    "PHILIPPINES": "Philippines",
-    "MYANMAR": "Myanmar",
-    "CAMBODIA": "Cambodia",
-    "LAOS": "Laos",
-    "TIMOR-LESTE": "Timor-Leste",
-    "TIMOR LESTE": "Timor-Leste",
-    "BRUNEI": "Brunei",
-    "BRUNEI DARUSSALAM": "Brunei",
-    "ASEAN": "ASEAN All Stars",
-
-
-    /* =========================
-       NATIONAL TEAMS - EUROPE
-    ========================= */
-
-    "ENGLAND": "England",
-    "FRANCE": "France",
-    "SPAIN": "Spain",
-    "GERMANY": "Germany",
-    "ITALY": "Italy",
-    "PORTUGAL": "Portugal",
-    "NETHERLANDS": "Netherlands",
-    "BELGIUM": "Belgium",
-    "CROATIA": "Croatia",
-    "SERBIA": "Serbia",
-    "SWITZERLAND": "Switzerland",
-    "AUSTRIA": "Austria",
-    "DENMARK": "Denmark",
-    "SWEDEN": "Sweden",
-    "NORWAY": "Norway",
-    "FINLAND": "Finland",
-    "POLAND": "Poland",
-    "CZECH REPUBLIC": "Czech Republic",
-    "CZECHIA": "Czech Republic",
-    "GREECE": "Greece",
-    "TURKEY": "Turkey",
-    "SCOTLAND": "Scotland",
-    "WALES": "Wales",
-    "IRELAND": "Ireland",
-    "UKRAINE": "Ukraine",
-    "ROMANIA": "Romania",
-    "BULGARIA": "Bulgaria",
-    "HUNGARY": "Hungary",
-    "SLOVAKIA": "Slovakia",
-    "SLOVENIA": "Slovenia",
-    "ALBANIA": "Albania",
-    "GEORGIA": "Georgia",
-    "ARMENIA": "Armenia",
-    "ICELAND": "Iceland",
-    "ISRAEL": "Israel",
-    "BOSNIA": "Bosnia-Herzegovina",
-    "MONTENEGRO": "Montenegro",
-    "NORTH MACEDONIA": "North Macedonia",
-    "KOSOVO": "Kosovo",
-
-
-    /* =========================
-       NATIONAL TEAMS - ASIA
-    ========================= */
-
-    "JAPAN": "Japan",
-    "SOUTH KOREA": "South Korea",
-    "KOREA REPUBLIC": "South Korea",
-    "CHINA": "China",
-    "AUSTRALIA": "Australia",
-    "IRAN": "Iran",
-    "IRAQ": "Iraq",
-    "SAUDI ARABIA": "Saudi Arabia",
-    "QATAR": "Qatar",
-    "UAE": "United Arab Emirates",
-    "UNITED ARAB EMIRATES": "United Arab Emirates",
-    "UZBEKISTAN": "Uzbekistan",
-    "JORDAN": "Jordan",
-    "OMAN": "Oman",
-    "BAHRAIN": "Bahrain",
-    "KUWAIT": "Kuwait",
-    "PALESTINE": "Palestine",
-    "SYRIA": "Syria",
-    "LEBANON": "Lebanon",
-    "INDIA": "India",
-    "NORTH KOREA": "North Korea",
-
-
-    /* =========================
-       NATIONAL TEAMS - AFRICA
-    ========================= */
-
-    "EGYPT": "Egypt",
-    "MOROCCO": "Morocco",
-    "ALGERIA": "Algeria",
-    "TUNISIA": "Tunisia",
-    "SENEGAL": "Senegal",
-    "NIGERIA": "Nigeria",
-    "GHANA": "Ghana",
-    "CAMEROON": "Cameroon",
-    "IVORY COAST": "Ivory Coast",
-    "COTE D'IVOIRE": "Ivory Coast",
-    "SOUTH AFRICA": "South Africa",
-    "MALI": "Mali",
-    "DR CONGO": "DR Congo",
-    "CONGO DR": "DR Congo",
-    "ZAMBIA": "Zambia",
-    "ANGOLA": "Angola",
-    "CAPE VERDE": "Cape Verde",
-    "BURKINA FASO": "Burkina Faso",
-    "GUINEA": "Guinea",
-
-
-    /* =========================
-       NATIONAL TEAMS - AMERICA
-    ========================= */
-
-    "BRAZIL": "Brazil",
-    "ARGENTINA": "Argentina",
-    "URUGUAY": "Uruguay",
-    "COLOMBIA": "Colombia",
-    "CHILE": "Chile",
-    "ECUADOR": "Ecuador",
-    "PERU": "Peru",
-    "PARAGUAY": "Paraguay",
-    "BOLIVIA": "Bolivia",
-    "VENEZUELA": "Venezuela",
-    "MEXICO": "Mexico",
-    "USA": "United States",
-    "UNITED STATES": "United States",
-    "CANADA": "Canada",
-    "COSTA RICA": "Costa Rica",
-    "PANAMA": "Panama",
-    "JAMAICA": "Jamaica",
-    "HONDURAS": "Honduras",
-    "HAITI": "Haiti",
-
-
-    /* =========================
-       OCEANIA
-    ========================= */
-
-    "NEW ZEALAND": "New Zealand",
-    "FIJI": "Fiji",
-    "SOLOMON ISLANDS": "Solomon Islands",
-    "TAHITI": "Tahiti"
-
-};
-
-    const cache = {};
-
-    async function getTeamLogo(teamName) {
-
-        const cleanName = teamName.trim();
-
-        if (cache[cleanName]) {
-            return cache[cleanName];
-        }
-
-        const searchName = teamAlias[cleanName] || cleanName;
-
-        try {
-
-            const response = await fetch(
-                API + encodeURIComponent(searchName)
-            );
-
-            if (!response.ok) {
-                throw new Error("API Error");
-            }
-
-            const data = await response.json();
-
-            if (data.teams && data.teams.length > 0) {
-
-                const team = data.teams[0];
-
-                const logo =
-                    team.strBadge ||
-                    team.strLogo ||
-                    team.strTeamBadge;
-
-                if (logo) {
-                    cache[cleanName] = logo;
-                    return logo;
-                }
-            }
-
-        } catch (error) {
-            console.warn("Logo gagal:", cleanName);
-        }
-
-        return fallbackLogo;
-    }
-
-
-    async function loadAllLogos() {
-
-        const teams = document.querySelectorAll(".wc-team");
-
-        for (const team of teams) {
-
-            const nameElement =
-                team.querySelector(".team-name") ||
-                team.querySelector("div:not(.wc-team)");
-
-            const image =
-                team.querySelector(".auto-team-logo");
-
-            if (!image || !nameElement) {
-                continue;
-            }
-
-            const teamName =
-                nameElement.textContent.trim();
-
-            image.src = fallbackLogo;
-
-            const logo =
-                await getTeamLogo(teamName);
-
-            image.src = logo;
-
-            image.onerror = function () {
-                this.src = fallbackLogo;
-            };
-        }
-    }
-
-    loadAllLogos();
 
 });
 </script>
