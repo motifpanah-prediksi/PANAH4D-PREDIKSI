@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="link-html" dir="ltr">
     <head>
@@ -1153,11 +1152,9 @@ transparent 95%,
     margin-bottom:50px !important;
 }
 
-/* Jarak pagination ke bawah */
-.swiper-pagination{
-    position:relative !important;
-    margin-top:20px !important;
-    margin-bottom:30px !important;
+/* HIDE PAGINATION DOTS */
+.swiper-pagination {
+    display: none !important;
 }
 
 /* Jarak sebelum FAQ */
@@ -1170,29 +1167,6 @@ transparent 95%,
     padding:10px;
 }
 
-
-/* PAGINATION */
-
-.swiper-pagination{
-    position:relative !important;
-    margin-top:15px !important;
-}
-
-.swiper-pagination-bullet{
-    width:10px !important;
-    height:10px !important;
-
-    background:#555 !important;
-    opacity:1 !important;
-}
-
-.swiper-pagination-bullet-active{
-    background:#FFD700 !important;
-
-    box-shadow:
-    0 0 10px #FFD700,
-    0 0 20px #FFD700;
-}
 .league-subtitle{
     font-size:11px;
     color:#b8b8b8;
@@ -1655,7 +1629,7 @@ transparent 95%,
 
     pointer-events:none;
 }
-</style>
+</style> 
 <div class="fifaSwiperWrap">
 <div class="swiper fifaSwiper">
 <div class="swiper-wrapper">
@@ -1670,7 +1644,7 @@ transparent 95%,
 <div class="team">
 <img class="auto-team-logo" data-team="Atletico Madrid" alt="ATL. MADRID"><div>ATL. MADRID</div>
 </div>
-<div class="score">3 - 0</div>
+<div class="score">0 - 0</div>
 <div class="team">
 <img class="auto-team-logo" data-team="Osasuna" alt="OSASUNA"><div>OSASUNA</div>
 </div>
@@ -1690,7 +1664,7 @@ transparent 95%,
 <div class="team">
 <img class="auto-team-logo" data-team="Deportivo La Coruna" alt="DEPORTIVO"><div>DEPORTIVO</div>
 </div>
-<div class="score">0 - 1</div>
+<div class="score">0 - 0</div>
 <div class="team">
 <img class="auto-team-logo" data-team="Sevilla" alt="SEVILLA"><div>SEVILLA</div>
 </div>
@@ -8051,8 +8025,2581 @@ socialMenu.classList.toggle('show');
                 generate_qr(element, element.getAttribute('data-qr'));
             })
         </script>
+<script>
+(function () {
 
-        
+    "use strict";
+
+    /* =========================================
+       AUTO SCORE ONLY
+       TIDAK MENYENTUH LOGO / POSISI HTML
+       ========================================= */
+
+    const UPDATE_INTERVAL = 30000;
+
+    let isUpdating = false;
+
+
+    /* =========================================
+       LEAGUE MAPPING
+       ========================================= */
+
+    const LEAGUES = {
+
+    /* =========================================================
+       ENGLAND 🏴
+       ========================================================= */
+
+    "PREMIER LEAGUE": "eng.1",
+    "EPL": "eng.1",
+    "ENGLISH PREMIER LEAGUE": "eng.1",
+
+    "CHAMPIONSHIP": "eng.2",
+    "ENGLISH CHAMPIONSHIP": "eng.2",
+
+    "LEAGUE ONE": "eng.3",
+    "ENGLISH LEAGUE ONE": "eng.3",
+
+    "LEAGUE TWO": "eng.4",
+    "ENGLISH LEAGUE TWO": "eng.4",
+
+    "NATIONAL LEAGUE": "eng.5",
+    "ENGLISH NATIONAL LEAGUE": "eng.5",
+
+    "FA CUP": "eng.fa",
+
+    "CARABAO CUP": "eng.league_cup",
+    "EFL CUP": "eng.league_cup",
+    "LEAGUE CUP": "eng.league_cup",
+
+    "EFL TROPHY": "eng.trophy",
+
+    "COMMUNITY SHIELD": "eng.charity",
+    "FA COMMUNITY SHIELD": "eng.charity",
+
+    "PREMIER LEAGUE ASIA TROPHY": "eng.asia_trophy",
+
+    "WOMENS SUPER LEAGUE": "eng.w.1",
+    "WOMEN SUPER LEAGUE": "eng.w.1",
+    "WSL": "eng.w.1",
+
+    "WOMENS FA CUP": "eng.w.fa",
+    "WOMEN FA CUP": "eng.w.fa",
+
+    "WOMENS COMMUNITY SHIELD": "eng.w.charity",
+
+
+    /* =========================================================
+       SPAIN 🇪🇸
+       ========================================================= */
+
+    "LA - LIGA": "esp.1",
+    "LA LIGA": "esp.1",
+    "LALIGA": "esp.1",
+    "LA LIGA EA SPORTS": "esp.1",
+
+    "SEGUNDA": "esp.2",
+    "LALIGA 2": "esp.2",
+    "LA LIGA 2": "esp.2",
+
+    "COPA DEL REY": "esp.copa_del_rey",
+
+    "SUPERCOPA": "esp.super_cup",
+    "SUPERCOPA ESPANA": "esp.super_cup",
+    "SPANISH SUPERCUP": "esp.super_cup",
+
+    "TROFEO JOAN GAMPER": "esp.joan_gamper",
+    "JOAN GAMPER": "esp.joan_gamper",
+
+    "LIGA F": "esp.w.1",
+    "WOMENS LIGA F": "esp.w.1",
+
+    "COPA DE LA REINA": "esp.copa_de_la_reina",
+
+
+    /* =========================================================
+       ITALY 🇮🇹
+       ========================================================= */
+
+    "SERIE A": "ita.1",
+    "ITALIA SERIE A": "ita.1",
+    "ITALIAN SERIE A": "ita.1",
+
+    "SERIE B": "ita.2",
+    "ITALIA SERIE B": "ita.2",
+    "ITALIAN SERIE B": "ita.2",
+
+    "COPPA ITALIA": "ita.coppa_italia",
+
+    "ITALIAN SUPERCUP": "ita.super_cup",
+    "SUPERCOPPA ITALIANA": "ita.super_cup",
+
+
+    /* =========================================================
+       GERMANY 🇩🇪
+       ========================================================= */
+
+    "BUNDESLIGA": "ger.1",
+    "GERMAN BUNDESLIGA": "ger.1",
+
+    "2 BUNDESLIGA": "ger.2",
+    "2. BUNDESLIGA": "ger.2",
+    "SECOND BUNDESLIGA": "ger.2",
+
+    "DFB POKAL": "ger.dfb_pokal",
+
+    "DFL SUPERCUP": "ger.super_cup",
+    "GERMAN SUPERCUP": "ger.super_cup",
+
+
+    /* =========================================================
+       FRANCE 🇫🇷
+       ========================================================= */
+
+    "LIGUE 1": "fra.1",
+    "FRENCH LIGUE 1": "fra.1",
+
+    "LIGUE 2": "fra.2",
+    "FRENCH LIGUE 2": "fra.2",
+
+    "COUPE DE FRANCE": "fra.coupe_de_france",
+
+    "TROPHEE DES CHAMPIONS": "fra.trophee_des_champions",
+
+
+    /* =========================================================
+       NETHERLANDS 🇳🇱
+       ========================================================= */
+
+    "EREDIVISIE": "ned.1",
+    "EREDEVISIE": "ned.1",
+    "DUTCH EREDIVISIE": "ned.1",
+
+
+    /* =========================================================
+       PORTUGAL 🇵🇹
+       ========================================================= */
+
+    "PRIMEIRA LIGA": "por.1",
+    "LIGA PORTUGAL": "por.1",
+    "PORTUGAL": "por.1",
+
+
+    /* =========================================================
+       SCOTLAND 🏴
+       ========================================================= */
+
+    "SCOTTISH PREMIERSHIP": "sco.1",
+    "SCOTLAND PREMIERSHIP": "sco.1",
+
+
+    /* =========================================================
+       TURKEY 🇹🇷
+       ========================================================= */
+
+    "TURKISH SUPER LIG": "tur.1",
+    "SUPER LIG": "tur.1",
+    "TURKEY SUPER LIG": "tur.1",
+
+
+    /* =========================================================
+       AUSTRIA 🇦🇹
+       ========================================================= */
+
+    "AUSTRIAN BUNDESLIGA": "aut.1",
+    "AUSTRIA BUNDESLIGA": "aut.1",
+
+
+    /* =========================================================
+       BELGIUM 🇧🇪
+       ========================================================= */
+
+    "BELGIAN PRO LEAGUE": "bel.1",
+    "BELGIUM PRO LEAGUE": "bel.1",
+
+
+    /* =========================================================
+       GREECE 🇬🇷
+       ========================================================= */
+
+    "GREEK SUPER LEAGUE": "gre.1",
+    "SUPER LEAGUE GREECE": "gre.1",
+
+
+    /* =========================================================
+       NORWAY 🇳🇴
+       ========================================================= */
+
+    "NORWEGIAN ELITESERIEN": "nor.1",
+    "ELITESERIEN": "nor.1",
+
+
+    /* =========================================================
+       IRELAND 🇮🇪
+       ========================================================= */
+
+    "IRISH PREMIER DIVISION": "irl.1",
+    "IRELAND PREMIER DIVISION": "irl.1",
+
+
+    /* =========================================================
+       CYPRUS 🇨🇾
+       ========================================================= */
+
+    "CYPRIOT FIRST DIVISION": "cyp.1",
+    "CYPRUS FIRST DIVISION": "cyp.1",
+
+
+    /* =========================================================
+       UEFA 🌍
+       ========================================================= */
+
+    "CHAMPIONS LEAGUE": "uefa.champions",
+    "UCL": "uefa.champions",
+    "UEFA CHAMPIONS LEAGUE": "uefa.champions",
+
+    "CHAMPIONS LEAGUE QUALIFYING": "uefa.champions_qual",
+    "UCL QUALIFYING": "uefa.champions_qual",
+
+    "EUROPA LEAGUE": "uefa.europa",
+    "UEL": "uefa.europa",
+    "UEFA EUROPA LEAGUE": "uefa.europa",
+
+    "EUROPA LEAGUE QUALIFYING": "uefa.europa_qual",
+    "UEL QUALIFYING": "uefa.europa_qual",
+
+    "CONFERENCE LEAGUE": "uefa.europa.conf",
+    "UECL": "uefa.europa.conf",
+    "EUROPA CONFERENCE LEAGUE": "uefa.europa.conf",
+
+    "CONFERENCE LEAGUE QUALIFYING": "uefa.europa.conf_qual",
+    "UECL QUALIFYING": "uefa.europa.conf_qual",
+
+    "UEFA SUPER CUP": "uefa.super_cup",
+
+    "WOMENS CHAMPIONS LEAGUE": "uefa.wchampions",
+    "WOMEN CHAMPIONS LEAGUE": "uefa.wchampions",
+    "UWCL": "uefa.wchampions",
+
+    "EURO": "uefa.euro",
+    "UEFA EURO": "uefa.euro",
+
+    "EURO QUALIFYING": "uefa.euroq",
+    "EUROPEAN CHAMPIONSHIP QUALIFYING": "uefa.euroq",
+
+    "WOMEN EURO": "uefa.weuro",
+    "WOMENS EURO": "uefa.weuro",
+
+    "EURO U21": "uefa.euro_u21",
+    "UEFA U21 EURO": "uefa.euro_u21",
+
+    "EURO U21 QUALIFYING": "uefa.euro_u21_qual",
+
+    "EURO U19": "uefa.euro.u19",
+
+    "NATIONS LEAGUE": "uefa.nations",
+    "UEFA NATIONS LEAGUE": "uefa.nations",
+
+    "WOMEN NATIONS LEAGUE": "uefa.w.nations",
+
+
+    /* =========================================================
+       USA 🇺🇸 / CONCACAF
+       ========================================================= */
+
+    "MLS": "usa.1",
+    "MAJOR LEAGUE SOCCER": "usa.1",
+
+    "US OPEN CUP": "usa.open",
+    "U.S. OPEN CUP": "usa.open",
+
+    "NWSL": "usa.nwsl",
+
+    "NWSL CUP": "usa.nwsl.cup",
+    "NWSL CHALLENGE CUP": "usa.nwsl.cup",
+
+    "NWSL SUMMER CUP": "usa.nwsl.summer.cup",
+
+    "USL CHAMPIONSHIP": "usa.usl.1",
+
+    "USL LEAGUE ONE": "usa.usl.l1",
+
+    "USL SUPER LEAGUE": "usa.w.usl.1",
+
+    "NCAA MEN": "usa.ncaa.m.1",
+    "NCAA MENS SOCCER": "usa.ncaa.m.1",
+
+    "NCAA WOMEN": "usa.ncaa.w.1",
+    "NCAA WOMENS SOCCER": "usa.ncaa.w.1",
+
+    "CONCACAF CHAMPIONS CUP": "concacaf.champions",
+
+    "LEAGUES CUP": "concacaf.leagues.cup",
+
+    "GOLD CUP": "concacaf.gold",
+    "CONCACAF GOLD CUP": "concacaf.gold",
+
+    "NATIONS LEAGUE CONCACAF": "concacaf.nations.league",
+    "CONCACAF NATIONS LEAGUE": "concacaf.nations.league",
+
+    "W GOLD CUP": "concacaf.w.gold",
+    "WOMEN GOLD CUP": "concacaf.w.gold",
+
+    "CONCACAF WOMENS CHAMPIONS CUP": "concacaf.w.champions_cup",
+
+    "CAMPEONES CUP": "campeones.cup",
+
+    "NORTHERN SUPER LEAGUE": "can.w.nsl",
+
+
+    /* =========================================================
+       MEXICO 🇲🇽
+       ========================================================= */
+
+    "LIGA MX": "mex.1",
+    "MEXICAN LIGA MX": "mex.1",
+
+    "LIGA DE EXPANSION": "mex.2",
+    "LIGA EXPANSION MX": "mex.2",
+
+    "CAMPEON DE CAMPEONES": "mex.campeon",
+
+    "SUPERCOPA MX": "mex.supercopa",
+
+
+    /* =========================================================
+       BRAZIL 🇧🇷
+       ========================================================= */
+
+    "BRASILEIRAO": "bra.1",
+    "BRASILEIRAO SERIE A": "bra.1",
+    "BRAZIL SERIE A": "bra.1",
+    "BRAZILIAN SERIE A": "bra.1",
+
+    "BRASILEIRAO SERIE B": "bra.2",
+    "BRAZIL SERIE B": "bra.2",
+    "BRAZILIAN SERIE B": "bra.2",
+
+    "COPA DO BRASIL": "bra.copa_do_brazil",
+
+
+    /* =========================================================
+       ARGENTINA 🇦🇷
+       ========================================================= */
+
+    "ARGENTINA": "arg.1",
+    "ARGENTINA LIGA PROFESIONAL": "arg.1",
+    "LIGA PROFESIONAL ARGENTINA": "arg.1",
+    "ARGENTINE LIGA PROFESIONAL": "arg.1",
+
+    "COPA ARGENTINA": "arg.copa",
+
+
+    /* =========================================================
+       CHILE 🇨🇱
+       ========================================================= */
+
+    "CHILE": "chi.1",
+    "CHILEAN PRIMERA": "chi.1",
+    "PRIMERA DIVISION CHILE": "chi.1",
+
+
+    /* =========================================================
+       COLOMBIA 🇨🇴
+       ========================================================= */
+
+    "COLOMBIA": "col.1",
+    "COLOMBIAN PRIMERA": "col.1",
+    "PRIMERA A COLOMBIA": "col.1",
+
+
+    /* =========================================================
+       PARAGUAY 🇵🇾
+       ========================================================= */
+
+    "PARAGUAY": "par.1",
+    "PARAGUAYAN PRIMERA": "par.1",
+    "PRIMERA DIVISION PARAGUAY": "par.1",
+
+
+    /* =========================================================
+       PERU 🇵🇪
+       ========================================================= */
+
+    "PERU": "per.1",
+    "PERU LIGA 1": "per.1",
+    "LIGA 1 PERU": "per.1",
+    "PERUVIAN LIGA 1": "per.1",
+
+
+    /* =========================================================
+       URUGUAY 🇺🇾
+       ========================================================= */
+
+    "URUGUAY": "uru.1",
+    "LIGA AUF": "uru.1",
+    "LIGA AUF URUGUAYA": "uru.1",
+
+
+    /* =========================================================
+       BOLIVIA 🇧🇴
+       ========================================================= */
+
+    "BOLIVIA": "bol.1",
+    "BOLIVIAN LIGA": "bol.1",
+    "BOLIVIAN PROFESSIONAL": "bol.1",
+
+
+    /* =========================================================
+       ECUADOR 🇪🇨
+       ========================================================= */
+
+    "ECUADOR": "ecu.1",
+    "LIGAPRO": "ecu.1",
+    "LIGA PRO ECUADOR": "ecu.1",
+
+
+    /* =========================================================
+       VENEZUELA 🇻🇪
+       ========================================================= */
+
+    "VENEZUELA": "ven.1",
+    "VENEZUELAN PRIMERA": "ven.1",
+    "PRIMERA DIVISION VENEZUELA": "ven.1",
+
+
+    /* =========================================================
+       CONMEBOL 🌎
+       ========================================================= */
+
+    "COPA LIBERTADORES": "conmebol.libertadores",
+    "LIBERTADORES": "conmebol.libertadores",
+    "CONMEBOL LIBERTADORES": "conmebol.libertadores",
+
+    "COPA SUDAMERICANA": "conmebol.sudamericana",
+    "SUDAMERICANA": "conmebol.sudamericana",
+    "CONMEBOL SUDAMERICANA": "conmebol.sudamericana",
+
+    "RECOPA": "conmebol.recopa",
+    "CONMEBOL RECOPA": "conmebol.recopa",
+
+    "COPA AMERICA": "conmebol.america",
+    "CONMEBOL COPA AMERICA": "conmebol.america",
+
+    "COPA AMERICA QUALIFYING": "conmebol.america_qual",
+
+    "COPA AMERICA FEMENINA": "conmebol.america.femenina",
+    "COPA AMERICA WOMEN": "conmebol.america.femenina",
+
+    "FINALISSIMA": "global.finalissima",
+
+
+    /* =========================================================
+       FIFA 🌎
+       ========================================================= */
+
+    "WORLD CUP": "fifa.world",
+    "FIFA WORLD CUP": "fifa.world",
+
+    "WOMEN WORLD CUP": "fifa.wwc",
+    "WOMENS WORLD CUP": "fifa.wwc",
+    "FIFA WOMENS WORLD CUP": "fifa.wwc",
+
+    "U20 WORLD CUP": "fifa.world.u20",
+    "FIFA U20 WORLD CUP": "fifa.world.u20",
+
+    "U17 WORLD CUP": "fifa.world.u17",
+    "FIFA U17 WORLD CUP": "fifa.world.u17",
+
+    "WOMEN U17 WORLD CUP": "fifa.wworld.u17",
+
+    "CLUB WORLD CUP": "fifa.cwc",
+    "FIFA CLUB WORLD CUP": "fifa.cwc",
+
+    "INTERNATIONAL FRIENDLY": "fifa.friendly",
+    "FRIENDLY": "fifa.friendly",
+
+    "WOMEN FRIENDLY": "fifa.friendly.w",
+    "WOMENS INTERNATIONAL FRIENDLY": "fifa.friendly.w",
+
+    "U21 FRIENDLY": "fifa.friendly_u21",
+
+    "U20 FRIENDLY": "fifa.u20.friendly",
+
+    "SHEBELIEVES CUP": "fifa.shebelieves",
+
+    "FIFA WOMENS CHAMPIONS CUP": "fifa.w.champions_cup",
+
+    "INTERCONTINENTAL CUP": "fifa.intercontinental_cup",
+
+    "OLYMPICS": "fifa.olympics",
+    "OLYMPIC FOOTBALL": "fifa.olympics",
+
+    "WOMEN OLYMPICS": "fifa.w.olympics",
+    "WOMENS OLYMPICS": "fifa.w.olympics",
+
+    "WORLD CUP QUALIFYING": "fifa.worldq",
+
+    "WORLD CUP QUALIFYING UEFA": "fifa.worldq.uefa",
+    "WORLD CUP QUALIFYING CAF": "fifa.worldq.caf",
+    "WORLD CUP QUALIFYING AFC": "fifa.worldq.afc",
+    "WORLD CUP QUALIFYING CONCACAF": "fifa.worldq.concacaf",
+    "WORLD CUP QUALIFYING CONMEBOL": "fifa.worldq.conmebol",
+    "WORLD CUP QUALIFYING OFC": "fifa.worldq.ofc",
+
+    "WOMEN WORLD CUP QUALIFYING PLAYOFF": "fifa.wwcq.ply",
+    "WOMEN WORLD CUP QUALIFYING UEFA": "fifa.wworldq.uefa",
+
+
+    /* =========================================================
+       AFRICA / CAF 🌍
+       ========================================================= */
+
+    "AFRICA CUP OF NATIONS": "caf.nations",
+    "AFCON": "caf.nations",
+
+    "AFCON QUALIFYING": "caf.nations_qual",
+    "AFRICA CUP OF NATIONS QUALIFYING": "caf.nations_qual",
+
+    "CAF CHAMPIONS LEAGUE": "caf.champions",
+
+    "CAF CONFEDERATION CUP": "caf.confed",
+
+    "SOUTH AFRICAN PREMIERSHIP": "rsa.1",
+    "SOUTH AFRICA PREMIERSHIP": "rsa.1",
+
+    "NIGERIAN PROFESSIONAL LEAGUE": "nga.1",
+    "NIGERIA": "nga.1",
+
+    "GHANAIAN PREMIER LEAGUE": "gha.1",
+    "GHANA": "gha.1",
+
+
+    /* =========================================================
+       ASIA / AFC 🌏
+       ========================================================= */
+
+    "AFC CHAMPIONS LEAGUE": "afc.champions",
+    "AFC CHAMPIONS LEAGUE ELITE": "afc.champions",
+
+    "AFC CHAMPIONS LEAGUE TWO": "afc.cup",
+    "AFC CUP": "afc.cup",
+
+    "AFC ASIAN CUP": "afc.asian.cup",
+
+    /* SAUDI ARABIA */
+
+    "SAUDI PRO LEAGUE": "ksa.1",
+    "SAUDI ARABIA": "ksa.1",
+
+    "SAUDI KING CUP": "ksa.kings.cup",
+    "KING CUP": "ksa.kings.cup",
+
+    /* JAPAN */
+
+    "J LEAGUE": "jpn.1",
+    "J.LEAGUE": "jpn.1",
+    "JAPANESE J LEAGUE": "jpn.1",
+    "JAPAN": "jpn.1",
+
+    /* CHINA */
+
+    "CHINESE SUPER LEAGUE": "chn.1",
+    "CHINA SUPER LEAGUE": "chn.1",
+    "CHINA": "chn.1",
+
+    /* INDIA */
+
+    "INDIAN SUPER LEAGUE": "ind.1",
+    "INDIA": "ind.1",
+
+    /* THAILAND */
+
+    "THAI LEAGUE": "tha.1",
+    "THAI LEAGUE 1": "tha.1",
+    "THAILAND": "tha.1",
+
+    /* MALAYSIA */
+
+    "MALAYSIAN SUPER LEAGUE": "mys.1",
+    "MALAYSIA SUPER LEAGUE": "mys.1",
+    "MALAYSIA": "mys.1",
+
+    /* INDONESIA */
+
+    "INDONESIAN SUPER LEAGUE": "idn.1",
+    "INDONESIA": "idn.1",
+    "LIGA INDONESIA": "idn.1",
+
+    /* SINGAPORE */
+
+    "SINGAPORE PREMIER LEAGUE": "sgp.1",
+    "SINGAPORE": "sgp.1",
+
+    /* AUSTRALIA */
+
+    "A LEAGUE": "aus.1",
+    "A LEAGUE MEN": "aus.1",
+    "AUSTRALIAN A LEAGUE": "aus.1",
+    "AUSTRALIA": "aus.1",
+
+    "A LEAGUE WOMEN": "aus.w.1",
+    "AUSTRALIAN A LEAGUE WOMEN": "aus.w.1",
+
+
+    /* =========================================================
+       CLUB / INTERNATIONAL FRIENDLIES
+       ========================================================= */
+
+    "CLUB FRIENDLY": "club.friendly",
+    "CLUB FRIENDLIES": "club.friendly",
+
+    "NON FIFA FRIENDLY": "nonfifa",
+
+    "EMIRATES CUP": "friendly.emirates_cup",
+
+    "INTERNATIONAL CHAMPIONS CUP": "global.champs_cup",
+
+    "US SOCCER MISC": "generic.ussf"
+
+};
+
+
+    /* =========================================
+       NORMALIZE TEAM NAME
+       ========================================= */
+
+    function normalize(text) {
+
+        return String(text || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/&/g, "and")
+            .replace(/[^a-z0-9\s]/g, " ")
+            .replace(
+                /\b(fc|cf|sc|ac|afc|club)\b/g,
+                " "
+            )
+            .replace(/\s+/g, " ")
+            .trim();
+
+    }
+
+
+    /* =========================================
+       TEAM ALIASES
+       ========================================= */
+
+    const ALIASES = {
+
+    /* =========================================================
+       🇪🇸 SPAIN
+       ========================================================= */
+
+    "atletico madrid": [
+        "atletico madrid",
+        "atletico de madrid",
+        "club atletico de madrid",
+        "atleti",
+        "atl madrid"
+    ],
+
+    "real madrid": [
+        "real madrid",
+        "real madrid cf",
+        "real madrid club de futbol",
+        "madrid"
+    ],
+
+    "barcelona": [
+        "barcelona",
+        "fc barcelona",
+        "barca",
+        "barça"
+    ],
+
+    "sevilla": [
+        "sevilla",
+        "sevilla fc"
+    ],
+
+    "osasuna": [
+        "osasuna",
+        "ca osasuna",
+        "club atletico osasuna"
+    ],
+
+    "deportivo la coruna": [
+        "deportivo la coruna",
+        "deportivo la coruña",
+        "rc deportivo",
+        "rc deportivo de la coruna",
+        "deportivo"
+    ],
+
+    "racing santander": [
+        "racing santander",
+        "racing de santander",
+        "real racing club",
+        "racing club"
+    ],
+
+    "athletic club": [
+        "athletic club",
+        "athletic bilbao",
+        "athletic",
+        "bilbao"
+    ],
+
+    "real sociedad": [
+        "real sociedad",
+        "real sociedad de futbol",
+        "real sociedad de fútbol"
+    ],
+
+    "villarreal": [
+        "villarreal",
+        "villarreal cf"
+    ],
+
+    "valencia": [
+        "valencia",
+        "valencia cf"
+    ],
+
+    "real betis": [
+        "real betis",
+        "real betis balompie",
+        "real betis balompié",
+        "betis"
+    ],
+
+    "celta vigo": [
+        "celta vigo",
+        "rc celta",
+        "celta de vigo"
+    ],
+
+    "girona": [
+        "girona",
+        "girona fc"
+    ],
+
+    "mallorca": [
+        "mallorca",
+        "rcd mallorca",
+        "real mallorca"
+    ],
+
+    "getafe": [
+        "getafe",
+        "getafe cf"
+    ],
+
+    "rayo vallecano": [
+        "rayo vallecano",
+        "rayo"
+    ],
+
+    "espanyol": [
+        "espanyol",
+        "rcd espanyol",
+        "español"
+    ],
+
+    "leganes": [
+        "leganes",
+        "cd leganes",
+        "leganés"
+    ],
+
+
+    /* =========================================================
+       🏴 ENGLAND
+       ========================================================= */
+
+    "arsenal": [
+        "arsenal",
+        "arsenal fc"
+    ],
+
+    "chelsea": [
+        "chelsea",
+        "chelsea fc"
+    ],
+
+    "liverpool": [
+        "liverpool",
+        "liverpool fc"
+    ],
+
+    "manchester city": [
+        "manchester city",
+        "man city",
+        "manchester city fc"
+    ],
+
+    "manchester united": [
+        "manchester united",
+        "man united",
+        "man utd",
+        "manchester united fc"
+    ],
+
+    "tottenham": [
+        "tottenham",
+        "tottenham hotspur",
+        "spurs",
+        "tottenham hotspur fc"
+    ],
+
+    "newcastle": [
+        "newcastle",
+        "newcastle united",
+        "newcastle united fc"
+    ],
+
+    "aston villa": [
+        "aston villa",
+        "aston villa fc"
+    ],
+
+    "west ham": [
+        "west ham",
+        "west ham united",
+        "west ham united fc"
+    ],
+
+    "everton": [
+        "everton",
+        "everton fc"
+    ],
+
+    "fulham": [
+        "fulham",
+        "fulham fc"
+    ],
+
+    "crystal palace": [
+        "crystal palace",
+        "crystal palace fc"
+    ],
+
+    "brighton": [
+        "brighton",
+        "brighton and hove albion",
+        "brighton & hove albion"
+    ],
+
+    "bournemouth": [
+        "bournemouth",
+        "afc bournemouth"
+    ],
+
+    "nottingham forest": [
+        "nottingham forest",
+        "nottingham forest fc"
+    ],
+
+    "wolverhampton": [
+        "wolverhampton",
+        "wolverhampton wanderers",
+        "wolves"
+    ],
+
+    "leicester city": [
+        "leicester city",
+        "leicester"
+    ],
+
+    "southampton": [
+        "southampton",
+        "southampton fc"
+    ],
+
+    "ipswich town": [
+        "ipswich",
+        "ipswich town",
+        "ipswich town fc"
+    ],
+
+    "leeds united": [
+        "leeds",
+        "leeds united",
+        "leeds united fc"
+    ],
+
+
+    /* =========================================================
+       🇮🇹 ITALY
+       ========================================================= */
+
+    "inter": [
+        "inter",
+        "inter milan",
+        "internazionale",
+        "internazionale milano",
+        "fc internazionale"
+    ],
+
+    "ac milan": [
+        "ac milan",
+        "milan",
+        "ac milan fc"
+    ],
+
+    "juventus": [
+        "juventus",
+        "juve",
+        "juventus fc"
+    ],
+
+    "napoli": [
+        "napoli",
+        "ssc napoli"
+    ],
+
+    "roma": [
+        "roma",
+        "as roma"
+    ],
+
+    "lazio": [
+        "lazio",
+        "ss lazio"
+    ],
+
+    "atalanta": [
+        "atalanta",
+        "atalanta bc"
+    ],
+
+    "fiorentina": [
+        "fiorentina",
+        "acf fiorentina"
+    ],
+
+    "bologna": [
+        "bologna",
+        "bologna fc",
+        "bologna 1909"
+    ],
+
+    "torino": [
+        "torino",
+        "torino fc"
+    ],
+
+    "genoa": [
+        "genoa",
+        "genoa cfc"
+    ],
+
+    "udinese": [
+        "udinese",
+        "udinese calcio"
+    ],
+
+
+    /* =========================================================
+       🇩🇪 GERMANY
+       ========================================================= */
+
+    "bayern munich": [
+        "bayern munich",
+        "bayern munchen",
+        "bayern münchen",
+        "fc bayern",
+        "fc bayern munich",
+        "fc bayern munchen"
+    ],
+
+    "borussia dortmund": [
+        "borussia dortmund",
+        "dortmund",
+        "bvb"
+    ],
+
+    "bayer leverkusen": [
+        "bayer leverkusen",
+        "bayer 04 leverkusen",
+        "leverkusen"
+    ],
+
+    "rb leipzig": [
+        "rb leipzig",
+        "rbl",
+        "red bull leipzig"
+    ],
+
+    "eintracht frankfurt": [
+        "eintracht frankfurt",
+        "frankfurt"
+    ],
+
+    "wolfsburg": [
+        "wolfsburg",
+        "vfl wolfsburg"
+    ],
+
+    "borussia monchengladbach": [
+        "borussia monchengladbach",
+        "borussia mönchengladbach",
+        "monchengladbach",
+        "gladbach"
+    ],
+
+    "stuttgart": [
+        "stuttgart",
+        "vfb stuttgart"
+    ],
+
+    "werder bremen": [
+        "werder bremen",
+        "bremen"
+    ],
+
+
+    /* =========================================================
+       🇫🇷 FRANCE
+       ========================================================= */
+
+    "psg": [
+        "psg",
+        "paris saint germain",
+        "paris saint-germain",
+        "paris sg",
+        "paris"
+    ],
+
+    "marseille": [
+        "marseille",
+        "olympique marseille",
+        "olympique de marseille"
+    ],
+
+    "lyon": [
+        "lyon",
+        "olympique lyonnais",
+        "olympique lyon"
+    ],
+
+    "monaco": [
+        "monaco",
+        "as monaco"
+    ],
+
+    "lille": [
+        "lille",
+        "losc",
+        "losc lille"
+    ],
+
+    "nice": [
+        "nice",
+        "ogc nice"
+    ],
+
+    "rennes": [
+        "rennes",
+        "stade rennais"
+    ],
+
+    "lens": [
+        "lens",
+        "rc lens"
+    ],
+
+
+    /* =========================================================
+       🇳🇱 NETHERLANDS
+       ========================================================= */
+
+    "ajax": [
+        "ajax",
+        "ajax amsterdam",
+        "afc ajax"
+    ],
+
+    "psv": [
+        "psv",
+        "psv eindhoven"
+    ],
+
+    "feyenoord": [
+        "feyenoord",
+        "feyenoord rotterdam"
+    ],
+
+    "az alkmaar": [
+        "az alkmaar",
+        "az",
+        "az alKmaar"
+    ],
+
+    "twente": [
+        "twente",
+        "fc twente"
+    ],
+
+
+    /* =========================================================
+       🇵🇹 PORTUGAL
+       ========================================================= */
+
+    "benfica": [
+        "benfica",
+        "sl benfica",
+        "sport lisboa e benfica"
+    ],
+
+    "porto": [
+        "porto",
+        "fc porto"
+    ],
+
+    "sporting cp": [
+        "sporting cp",
+        "sporting lisbon",
+        "sporting",
+        "sporting clube de portugal"
+    ],
+
+    "braga": [
+        "braga",
+        "sc braga"
+    ],
+
+
+    /* =========================================================
+       🇹🇷 TURKEY
+       ========================================================= */
+
+    "galatasaray": [
+        "galatasaray",
+        "galatasaray sk"
+    ],
+
+    "fenerbahce": [
+        "fenerbahce",
+        "fenerbahçe",
+        "fenerbahce sk"
+    ],
+
+    "besiktas": [
+        "besiktas",
+        "beşiktaş",
+        "besiktas jk"
+    ],
+
+    "trabzonspor": [
+        "trabzonspor",
+        "trabzon"
+    ],
+
+
+    /* =========================================================
+       🇧🇪 BELGIUM
+       ========================================================= */
+
+    "club brugge": [
+        "club brugge",
+        "club brugge kv",
+        "brugge"
+    ],
+
+    "anderlecht": [
+        "anderlecht",
+        "rsc anderlecht"
+    ],
+
+    "genk": [
+        "genk",
+        "krc genk"
+    ],
+
+
+    /* =========================================================
+       🇬🇷 GREECE
+       ========================================================= */
+
+    "olympiacos": [
+        "olympiacos",
+        "olympiakos",
+        "olympiacos fc"
+    ],
+
+    "panathinaikos": [
+        "panathinaikos",
+        "panathinaikos fc"
+    ],
+
+    "aek athens": [
+        "aek athens",
+        "aek"
+    ],
+
+    "paok": [
+        "paok",
+        "paok fc"
+    ],
+
+
+    /* =========================================================
+       🇺🇸 USA
+       ========================================================= */
+
+    "inter miami": [
+        "inter miami",
+        "inter miami cf",
+        "inter miami fc"
+    ],
+
+    "la galaxy": [
+        "la galaxy",
+        "los angeles galaxy"
+    ],
+
+    "los angeles fc": [
+        "los angeles fc",
+        "lafc"
+    ],
+
+    "new york city": [
+        "new york city",
+        "nycfc",
+        "new york city fc"
+    ],
+
+    "new york red bulls": [
+        "new york red bulls",
+        "new york red bull",
+        "ny red bulls"
+    ],
+
+    "seattle sounders": [
+        "seattle sounders",
+        "seattle sounders fc"
+    ],
+
+    "atlanta united": [
+        "atlanta united",
+        "atlanta united fc"
+    ],
+
+
+    /* =========================================================
+       🇲🇽 MEXICO
+       ========================================================= */
+
+    "club america": [
+        "club america",
+        "america",
+        "america mx",
+        "cf america"
+    ],
+
+    "chivas": [
+        "chivas",
+        "guadalajara",
+        "cd guadalajara"
+    ],
+
+    "cruz azul": [
+        "cruz azul",
+        "blue cross"
+    ],
+
+    "monterrey": [
+        "monterrey",
+        "cf monterrey",
+        "rayados"
+    ],
+
+    "tigres": [
+        "tigres",
+        "tigres uanl",
+        "uanl"
+    ],
+
+    /* =========================================================
+       🇧🇷 BRAZIL
+       ========================================================= */
+
+    "flamengo": [
+        "flamengo",
+        "flamengo rj",
+        "cr flamengo"
+    ],
+
+    "palmeiras": [
+        "palmeiras",
+        "se palmeiras"
+    ],
+
+    "corinthians": [
+        "corinthians",
+        "sc corinthians"
+    ],
+
+    "sao paulo": [
+        "sao paulo",
+        "são paulo",
+        "sao paulo fc"
+    ],
+
+    "santos": [
+        "santos",
+        "santos fc"
+    ],
+
+    "botafogo": [
+        "botafogo",
+        "botafogo rj"
+    ],
+
+    "fluminense": [
+        "fluminense",
+        "fluminense fc"
+    ],
+
+    "gremio": [
+        "gremio",
+        "grêmio",
+        "gremio fbpa"
+    ],
+
+
+    /* =========================================================
+       🇦🇷 ARGENTINA
+       ========================================================= */
+
+    "river plate": [
+        "river plate",
+        "club atletico river plate",
+        "river"
+    ],
+
+    "boca juniors": [
+        "boca juniors",
+        "boca",
+        "club atletico boca juniors"
+    ],
+
+    "racing club": [
+        "racing club",
+        "racing avellaneda"
+    ],
+
+    "independiente": [
+        "independiente",
+        "club atletico independiente"
+    ],
+
+    "san lorenzo": [
+        "san lorenzo",
+        "san lorenzo de almagro"
+    ],
+
+
+    /* =========================================================
+       🇨🇴 COLOMBIA
+       ========================================================= */
+
+    "atletico nacional": [
+        "atletico nacional",
+        "atl nacional",
+        "atletico nacional medellin"
+    ],
+
+    "millonarios": [
+        "millonarios",
+        "millonarios fc"
+    ],
+
+    "america de cali": [
+        "america de cali",
+        "america cali"
+    ],
+
+    "junior": [
+        "junior",
+        "junior barranquilla",
+        "atletico junior"
+    ],
+
+
+    /* =========================================================
+       🇸🇦 SAUDI ARABIA
+       ========================================================= */
+
+    "al hilal": [
+        "al hilal",
+        "al hilal saudi",
+        "al hilal sfc",
+        "hilal"
+    ],
+
+    "al nassr": [
+        "al nassr",
+        "al nassr fc",
+        "al-nassr"
+    ],
+
+    "al ahly": [
+        "al ahly",
+        "al ahli",
+        "al ahli saudi"
+    ],
+
+    "al ittihad": [
+        "al ittihad",
+        "al ittihad jeddah",
+        "ittihad"
+    ],
+
+    "al shabab": [
+        "al shabab",
+        "al shabab saudi"
+    ],
+
+    "al ettifaq": [
+        "al ettifaq",
+        "ettifaq"
+    ],
+
+
+    /* =========================================================
+       🇯🇵 JAPAN
+       ========================================================= */
+
+    "kashima antlers": [
+        "kashima antlers",
+        "kashima"
+    ],
+
+    "urawa red diamonds": [
+        "urawa red diamonds",
+        "urawa reds",
+        "urawa"
+    ],
+
+    "yokohama f marinos": [
+        "yokohama f marinos",
+        "yokohama marinos",
+        "yokohama"
+    ],
+
+    "kawasaki frontale": [
+        "kawasaki frontale",
+        "kawasaki"
+    ],
+
+    "vissel kobe": [
+        "vissel kobe",
+        "kobe"
+    ],
+
+
+    /* =========================================================
+       🇨🇳 CHINA
+       ========================================================= */
+
+    "shanghai port": [
+        "shanghai port",
+        "shanghai sipg",
+        "sipg"
+    ],
+
+    "shanghai shenhua": [
+        "shanghai shenhua",
+        "shanghai greenland shenhua"
+    ],
+
+    "beijing guoan": [
+        "beijing guoan",
+        "beijing guoan fc"
+    ],
+
+    "shandong taishan": [
+        "shandong taishan",
+        "shandong luneng"
+    ],
+
+
+    /* =========================================================
+       🇮🇳 INDIA
+       ========================================================= */
+
+    "mohun bagan": [
+        "mohun bagan",
+        "mohun bagan super giant"
+    ],
+
+    "east bengal": [
+        "east bengal",
+        "emami east bengal",
+        "east bengal fc"
+    ],
+
+    "kerala blasters": [
+        "kerala blasters",
+        "kerala blasters fc"
+    ],
+
+    "mumbai city": [
+        "mumbai city",
+        "mumbai city fc"
+    ],
+
+
+    /* =========================================================
+       🇹🇭 THAILAND
+       ========================================================= */
+
+    "buriram united": [
+        "buriram united",
+        "buriram"
+    ],
+
+    "muangthong united": [
+        "muangthong united",
+        "muangthong"
+    ],
+
+    "bangkok united": [
+        "bangkok united",
+        "true bangkok united"
+    ],
+
+
+    /* =========================================================
+       🇲🇾 MALAYSIA
+       ========================================================= */
+
+    "johor darul tazim": [
+        "johor darul tazim",
+        "jdt",
+        "johor"
+    ],
+
+    "selangor": [
+        "selangor",
+        "selangor fc"
+    ],
+
+    "kedah": [
+        "kedah",
+        "kedah darul aman"
+    ],
+
+
+    /* =========================================================
+       🇮🇩 INDONESIA
+       ========================================================= */
+
+    "persib bandung": [
+        "persib",
+        "persib bandung",
+        "persib bandung fc"
+    ],
+
+    "persija jakarta": [
+        "persija",
+        "persija jakarta"
+    ],
+
+    "bali united": [
+        "bali united",
+        "bali united fc"
+    ],
+
+    "persebaya": [
+        "persebaya",
+        "persebaya surabaya"
+    ],
+
+    "arema": [
+        "arema",
+        "arema fc"
+    ],
+
+    "persis solo": [
+        "persis",
+        "persis solo"
+    ],
+
+    "psis semarang": [
+        "psis",
+        "psis semarang"
+    ],
+
+    "dewa united": [
+        "dewa united",
+        "dewa united fc"
+    ],
+
+
+    /* =========================================================
+       🇸🇬 SINGAPORE
+       ========================================================= */
+
+    "lion city sailors": [
+        "lion city sailors",
+        "lion city",
+        "lcs"
+    ],
+
+    "tampines rovers": [
+        "tampines rovers",
+        "tampines"
+    ],
+
+
+    /* =========================================================
+       🇦🇺 AUSTRALIA
+       ========================================================= */
+
+    "melbourne victory": [
+        "melbourne victory",
+        "melbourne victory fc"
+    ],
+
+    "melbourne city": [
+        "melbourne city",
+        "melbourne city fc"
+    ],
+
+    "sydney fc": [
+        "sydney fc",
+        "sydney"
+    ],
+
+    "western sydney wanderers": [
+        "western sydney wanderers",
+        "wsw",
+        "western sydney"
+    ],
+
+    "brisbane roar": [
+        "brisbane roar",
+        "brisbane roar fc"
+    ],
+
+
+    /* =========================================================
+       🇿🇦 SOUTH AFRICA
+       ========================================================= */
+
+    "mamelodi sundowns": [
+        "mamelodi sundowns",
+        "sundowns"
+    ],
+
+    "orlando pirates": [
+        "orlando pirates",
+        "pirates"
+    ],
+
+    "kaizer chiefs": [
+        "kaizer chiefs",
+        "chiefs"
+    ],
+
+
+    /* =========================================================
+       🇳🇬 NIGERIA
+       ========================================================= */
+
+    "enyimba": [
+        "enyimba",
+        "enyimba fc"
+    ],
+
+    "rivers united": [
+        "rivers united",
+        "rivers united fc"
+    ],
+
+
+    /* =========================================================
+       🌍 NATIONAL TEAMS
+       ========================================================= */
+
+    "england": [
+        "england",
+        "england national team"
+    ],
+
+    "spain": [
+        "spain",
+        "spanish national team"
+    ],
+
+    "italy": [
+        "italy",
+        "italia",
+        "italy national team"
+    ],
+
+    "germany": [
+        "germany",
+        "deutschland",
+        "german national team"
+    ],
+
+    "france": [
+        "france",
+        "french national team"
+    ],
+
+    "netherlands": [
+        "netherlands",
+        "holland",
+        "dutch national team"
+    ],
+
+    "portugal": [
+        "portugal",
+        "portugal national team"
+    ],
+
+    "belgium": [
+        "belgium",
+        "belgian national team"
+    ],
+
+    "brazil": [
+        "brazil",
+        "brasil",
+        "brazil national team"
+    ],
+
+    "argentina": [
+        "argentina",
+        "argentina national team"
+    ],
+
+    "mexico": [
+        "mexico",
+        "mexico national team"
+    ],
+
+    "usa": [
+        "usa",
+        "united states",
+        "united states national team"
+    ],
+
+    "japan": [
+        "japan",
+        "japan national team"
+    ],
+
+    "south korea": [
+        "south korea",
+        "korea republic",
+        "korea",
+        "republic of korea"
+    ],
+
+    "indonesia": [
+        "indonesia",
+        "indonesia national team"
+    ],
+
+    "malaysia": [
+        "malaysia",
+        "malaysia national team"
+    ],
+
+    "thailand": [
+        "thailand",
+        "thailand national team"
+    ],
+
+    "saudi arabia": [
+        "saudi arabia",
+        "saudi arabia national team"
+    ],
+
+    "australia": [
+        "australia",
+        "australia national team",
+        "socceroos"
+    ],
+
+    "morocco": [
+        "morocco",
+        "morocco national team"
+    ],
+
+    "senegal": [
+        "senegal",
+        "senegal national team"
+    ],
+
+    "egypt": [
+        "egypt",
+        "egypt national team"
+    ]
+};
+
+
+    /* =========================================
+       TEAM MATCH
+       ========================================= */
+
+    function sameTeam(a, b) {
+
+        const A = normalize(a);
+        const B = normalize(b);
+
+        if (!A || !B) {
+            return false;
+        }
+
+        if (A === B) {
+            return true;
+        }
+
+        if (
+            A.includes(B) ||
+            B.includes(A)
+        ) {
+            return true;
+        }
+
+        for (const key in ALIASES) {
+
+            const list =
+                ALIASES[key]
+                    .map(normalize);
+
+            if (
+                list.includes(A) &&
+                list.includes(B)
+            ) {
+                return true;
+            }
+
+        }
+
+        return false;
+
+    }
+
+
+    /* =========================================
+       GET LEAGUE
+       ========================================= */
+
+    function getLeague(card) {
+
+        const element =
+            card.querySelector(
+                ".league-title"
+            );
+
+        if (!element) {
+            return null;
+        }
+
+        const title =
+            normalize(
+                element.textContent
+            ).toUpperCase();
+
+        return LEAGUES[title] || null;
+
+    }
+
+
+    /* =========================================
+       MONTH
+       ========================================= */
+
+    const MONTHS = {
+
+        JAN: 0,
+        FEB: 1,
+        MAR: 2,
+        APR: 3,
+        MAY: 4,
+        JUN: 5,
+        JUL: 6,
+        AUG: 7,
+        SEP: 8,
+        OCT: 9,
+        NOV: 10,
+        DEC: 11
+
+    };
+
+
+    /* =========================================
+       PARSE DATE
+
+       17 SEP 2026 - 00.00 WIB
+       ========================================= */
+
+    function parseDate(text) {
+
+        if (!text) {
+            return null;
+        }
+
+        const value =
+            text
+                .toUpperCase()
+                .replace(/\./g, ":")
+                .trim();
+
+        const match =
+            value.match(
+                /(\d{1,2})\s+([A-Z]{3})\s+(\d{4})(?:\s*-\s*(\d{1,2}):(\d{2}))?/
+            );
+
+        if (!match) {
+            return null;
+        }
+
+        const day =
+            Number(match[1]);
+
+        const month =
+            MONTHS[match[2]];
+
+        const year =
+            Number(match[3]);
+
+        const hour =
+            Number(match[4] || 0);
+
+        const minute =
+            Number(match[5] || 0);
+
+        if (month === undefined) {
+            return null;
+        }
+
+        /*
+         * WIB = UTC+7
+         */
+
+        return new Date(
+            Date.UTC(
+                year,
+                month,
+                day,
+                hour - 7,
+                minute
+            )
+        );
+
+    }
+
+
+    /* =========================================
+       ESPN DATE FORMAT
+       ========================================= */
+
+    function espnDate(date) {
+
+        return (
+            date.getUTCFullYear() +
+            String(
+                date.getUTCMonth() + 1
+            ).padStart(2, "0") +
+            String(
+                date.getUTCDate()
+            ).padStart(2, "0")
+        );
+
+    }
+
+
+    /* =========================================
+       FETCH ESPN
+       ========================================= */
+
+    async function fetchScoreboard(
+        league,
+        date
+    ) {
+
+        const url =
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/" +
+            league +
+            "/scoreboard?dates=" +
+            date;
+
+        try {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: "GET",
+                        cache: "no-store"
+                    }
+                );
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+
+            }
+
+            return await response.json();
+
+        }
+        catch (error) {
+
+            console.error(
+                "[AUTO SCORE] ESPN ERROR:",
+                error
+            );
+
+            return null;
+
+        }
+
+    }
+
+
+    /* =========================================
+       GET TEAMS FROM ESPN
+       ========================================= */
+
+    function getTeams(event) {
+
+        const competition =
+            event?.competitions?.[0];
+
+        if (!competition) {
+            return null;
+        }
+
+        const competitors =
+            competition.competitors || [];
+
+        let home = null;
+        let away = null;
+
+        competitors.forEach(
+            competitor => {
+
+                if (
+                    competitor.homeAway ===
+                    "home"
+                ) {
+                    home = competitor;
+                }
+
+                if (
+                    competitor.homeAway ===
+                    "away"
+                ) {
+                    away = competitor;
+                }
+
+            }
+        );
+
+        return {
+            home,
+            away
+        };
+
+    }
+
+
+    /* =========================================
+       FIND MATCH
+       ========================================= */
+
+    function findMatch(
+        events,
+        homeName,
+        awayName
+    ) {
+
+        if (
+            !Array.isArray(events)
+        ) {
+            return null;
+        }
+
+        for (
+            const event of events
+        ) {
+
+            const teams =
+                getTeams(event);
+
+            if (!teams) {
+                continue;
+            }
+
+            const apiHome =
+                teams.home?.team?.displayName ||
+                teams.home?.team?.name ||
+                "";
+
+            const apiAway =
+                teams.away?.team?.displayName ||
+                teams.away?.team?.name ||
+                "";
+
+
+            /*
+             * HOME VS AWAY
+             */
+
+            if (
+                sameTeam(
+                    apiHome,
+                    homeName
+                ) &&
+                sameTeam(
+                    apiAway,
+                    awayName
+                )
+            ) {
+
+                return event;
+
+            }
+
+
+            /*
+             * REVERSED
+             */
+
+            if (
+                sameTeam(
+                    apiHome,
+                    awayName
+                ) &&
+                sameTeam(
+                    apiAway,
+                    homeName
+                )
+            ) {
+
+                return event;
+
+            }
+
+        }
+
+        return null;
+
+    }
+
+
+    /* =========================================
+       UPDATE SCORE ONLY
+
+       PENTING:
+       HANYA .score YANG DIUBAH
+       ========================================= */
+
+    function updateScore(
+        card,
+        event
+    ) {
+
+        const scoreElement =
+            card.querySelector(
+                ".score"
+            );
+
+        if (!scoreElement) {
+            return;
+        }
+
+        const teams =
+            getTeams(event);
+
+        if (!teams) {
+            return;
+        }
+
+        const homeScore =
+            teams.home?.score ??
+            "0";
+
+        const awayScore =
+            teams.away?.score ??
+            "0";
+
+
+        /*
+         * SATU-SATUNYA PERUBAHAN DOM
+         */
+
+        scoreElement.textContent =
+            homeScore +
+            " - " +
+            awayScore;
+
+
+        /*
+         * ID disimpan di CARD.
+         * Tidak mengubah tampilan.
+         */
+
+        card.dataset.espnEventId =
+            event.id || "";
+
+
+        console.log(
+            "%c[AUTO SCORE]",
+            "color:#00d26a;font-weight:bold",
+            homeScore +
+            " - " +
+            awayScore
+        );
+
+    }
+
+
+    /* =========================================
+       READ MATCH CARD
+       ========================================= */
+
+    function readCard(card) {
+
+        const teams =
+            card.querySelectorAll(
+                ".team"
+            );
+
+        if (
+            teams.length < 2
+        ) {
+            return null;
+        }
+
+
+        /*
+         * HANYA MEMBACA data-team.
+         * TIDAK MENGUBAH LOGO.
+         */
+
+        const homeElement =
+            teams[0].querySelector(
+                "[data-team]"
+            );
+
+        const awayElement =
+            teams[1].querySelector(
+                "[data-team]"
+            );
+
+
+        const homeName =
+            homeElement?.dataset.team ||
+            teams[0].innerText.trim();
+
+
+        const awayName =
+            awayElement?.dataset.team ||
+            teams[1].innerText.trim();
+
+
+        const timeElement =
+            card.querySelector(
+                ".match-time"
+            );
+
+
+        const date =
+            parseDate(
+                timeElement?.textContent
+            );
+
+
+        const league =
+            getLeague(card);
+
+
+        return {
+
+            card,
+            homeName,
+            awayName,
+            date,
+            league
+
+        };
+
+    }
+
+
+    /* =========================================
+       UPDATE ALL MATCH
+       ========================================= */
+
+    async function updateAll() {
+
+        if (isUpdating) {
+            return;
+        }
+
+        isUpdating = true;
+
+        try {
+
+            const cards =
+                Array.from(
+                    document.querySelectorAll(
+                        ".match-card"
+                    )
+                );
+
+
+            if (!cards.length) {
+
+                console.warn(
+                    "[AUTO SCORE] .match-card tidak ditemukan."
+                );
+
+                return;
+
+            }
+
+
+            const items =
+                cards
+                    .map(readCard)
+                    .filter(Boolean);
+
+
+            const cache = {};
+
+
+            /* =================================
+               FETCH PER LEAGUE + DATE
+               ================================= */
+
+            for (
+                const item of items
+            ) {
+
+                if (
+                    !item.league
+                ) {
+
+                    console.warn(
+                        "[AUTO SCORE] Liga tidak dikenali:",
+                        item.card
+                            .querySelector(
+                                ".league-title"
+                            )
+                            ?.textContent
+                    );
+
+                    continue;
+
+                }
+
+
+                if (
+                    !item.date
+                ) {
+
+                    console.warn(
+                        "[AUTO SCORE] Tanggal tidak dikenali:",
+                        item.card
+                            .querySelector(
+                                ".match-time"
+                            )
+                            ?.textContent
+                    );
+
+                    continue;
+
+                }
+
+
+                const date =
+                    espnDate(
+                        item.date
+                    );
+
+
+                const key =
+                    item.league +
+                    "_" +
+                    date;
+
+
+                if (
+                    !cache[key]
+                ) {
+
+                    cache[key] =
+                        await fetchScoreboard(
+                            item.league,
+                            date
+                        );
+
+                }
+
+            }
+
+
+            /* =================================
+               MATCH & UPDATE SCORE
+               ================================= */
+
+            for (
+                const item of items
+            ) {
+
+                if (
+                    !item.league ||
+                    !item.date
+                ) {
+                    continue;
+                }
+
+
+                const date =
+                    espnDate(
+                        item.date
+                    );
+
+
+                const key =
+                    item.league +
+                    "_" +
+                    date;
+
+
+                const data =
+                    cache[key];
+
+
+                if (
+                    !data ||
+                    !Array.isArray(
+                        data.events
+                    )
+                ) {
+
+                    console.warn(
+                        "[AUTO SCORE] Data tidak tersedia:",
+                        item.homeName,
+                        "vs",
+                        item.awayName
+                    );
+
+                    continue;
+
+                }
+
+
+                const event =
+                    findMatch(
+                        data.events,
+                        item.homeName,
+                        item.awayName
+                    );
+
+
+                if (event) {
+
+                    updateScore(
+                        item.card,
+                        event
+                    );
+
+                }
+                else {
+
+                    console.warn(
+                        "[AUTO SCORE] MATCH NOT FOUND:",
+                        item.homeName,
+                        "vs",
+                        item.awayName
+                    );
+
+                }
+
+            }
+
+        }
+        finally {
+
+            isUpdating = false;
+
+        }
+
+    }
+
+
+    /* =========================================
+       START
+       ========================================= */
+
+    function startAutoScore() {
+
+        console.log(
+            "%c AUTO SCORE ONLY AKTIF ",
+            "background:#111;color:#00ff66;font-weight:bold;padding:6px 10px"
+        );
+
+
+        /*
+         * Update pertama
+         */
+
+        updateAll();
+
+
+        /*
+         * Update setiap 30 detik
+         */
+
+        setInterval(
+            updateAll,
+            UPDATE_INTERVAL
+        );
+
+    }
+
+
+    /* =========================================
+       DOM READY
+       ========================================= */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            startAutoScore
+        );
+
+    }
+    else {
+
+        startAutoScore();
+
+    }
+
+})();
+</script>     
         <script>
     /* Background backdrop fix on modal */
     let backdrop_filter = null;
