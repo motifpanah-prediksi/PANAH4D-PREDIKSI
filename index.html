@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-                  <link rel="shortcut icon" href="https://1.bp.blogspot.com/-56e8NokMgZg/Xw9qUODJWbI/AAAAAAAABbI/Kt7Qc_I7hvsFXmO1H0UtTKIlnKXeze9KgCNcBGAsYHQ/s1600/wasiat4d.png">        
-                  <link href="/favicon.png" rel="icon" />
 <meta name="theme-color" content="#101b2a">
 <title>PANAH4D | PREDIKSI BOLA TERBAIK </title>
 <style>
@@ -1041,6 +1039,25 @@ header .wrap.nav {
   background: transparent;
 }
 
+  
+/* Posisi tanggal di sebelah kiri tombol MENU */
+.header-date {
+  margin-left: auto;
+  margin-right: 12px;
+  color: #f5f5f5;
+  font-size: 12px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Header mobile */
+@media (max-width: 600px) {
+  .header-date {
+    font-size: 10px;
+    margin-right: 6px;
+  }
+}
+
 /* MENU NAVIGASI */
 .navlinks a {
   color: #f5f5f5;
@@ -1124,35 +1141,226 @@ header .wrap.nav {
   }
 }
 
+  @media (max-width: 600px) {
+  header {
+    height: 59px;
+  }
+
+  header .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  .brand-logo {
+    width: 105px;
+    height: 36px;
+  }
+
+
+  .navlinks::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navlinks a {
+    flex: 0 0 auto;
+  }
+
+  .navmeta {
+    display: none;
+  }
+}
+  
+
+/* MENU BUTTON */
+header .menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 13px;
+  border: 1px solid #ff941f;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffc857, #ff941f);
+  color: #241506;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  position: relative;
+  z-index: 1002;
+}
+
+/* NAVBAR CONTAINER */
+header .nav {
+  position: relative;
+  overflow: visible !important;
+}
+
+/* POPUP DEFAULT: TERTUTUP */
+header #navMenu.navlinks {
+  display: none !important;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  z-index: 1001;
+  width: 190px;
+  max-width: calc(100vw - 16px);
+  padding: 6px;
+  flex-direction: column;
+  gap: 3px;
+  background: linear-gradient(145deg, #21150b, #120e0a);
+  border: 1px solid #ff941f;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 10px 25px #0005;
+}
+
+/* POPUP HANYA TERBUKA SAAT ADA CLASS OPEN */
+header #navMenu.navlinks.open {
+  display: flex !important;
+}
+
+/* LINK MENU */
+header #navMenu.navlinks a {
+  display: block;
+  padding: 10px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+header #navMenu.navlinks a:hover {
+  background: #35200c;
+  color: #ffc857;
+}
+
+/* HP */
+@media (max-width: 600px) {
+  header .nav {
+    overflow: visible !important;
+  }
+
+  header .menu-toggle {
+    margin-left: auto;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  header #navMenu.navlinks {
+    width: 165px;
+  }
+}
+
+
+/* SEARCH LIGA PANAH4D */
+.league-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  min-height: 42px;
+  margin: 0 0 12px;
+  padding: 0 12px;
+  background: #fff;
+  border: 1px solid #e5c17c;
+  border-radius: 9px;
+  box-shadow: 0 3px 12px #9b5c140d;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.league-search:focus-within {
+  border-color: #ff941f;
+  box-shadow: 0 0 0 3px #ff941f20;
+}
+
+.league-search .search-icon {
+  color: #b87512;
+  font-size: 23px;
+  line-height: 1;
+}
+
+.league-search input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #182331;
+  font: inherit;
+  font-size: 12px;
+}
+
+.league-search input::placeholder {
+  color: #9aa3ad;
+}
+
+.league-search button {
+  display: none;
+  border: 0;
+  background: transparent;
+  color: #7b8795;
+  padding: 5px;
+  font-size: 13px;
+}
+
+.league-search button.visible {
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .league-search {
+    max-width: none;
+    min-height: 40px;
+    margin-bottom: 10px;
+  }
+}
+
+  
 </style>
 
 </head>
 <body>
 
 <header>
-  <div class="wrap nav">
 
-    <!-- LOGO WEBSITE -->
-    <a class="brand" href="#">
-      <img
-        class="brand-logo"
-        src="https://pxdrop.online/raw/db953pi81qec73f6p39g"
-        alt="Logo PANAH4D"
-      >
-    </a>
+<div class="wrap nav">
 
-    <!-- MENU NAVIGASI -->
-    <nav class="navlinks">
-      <a href="#">Match Centre</a>
-      <a href="#prediksi">Prediksi</a>
-      <a href="#jadwal">Jadwal</a>
-      <a href="#provider">Provider</a>
-    </nav>
+  <!-- LOGO WEBSITE -->
+  <a class="brand" href="https://www.panahkawan.com">
+    <img
+      class="brand-logo"
+      src="https://pxdrop.online/raw/db953pi81qec73f6p39g"
+      alt="Logo PANAH4D"
+    >
+  </a>
 
-    <!-- TANGGAL OTOMATIS -->
-    <span class="navmeta" id="dateLabel"></span>
+  <!-- TOMBOL MENU -->
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="navMenu"
+  >
+    ☰ MENU
+  </button>
 
-  </div>
+  <!-- DAFTAR MENU -->
+  <nav class="navlinks" id="navMenu">
+    <a href="https://jp-panah.vercel.app/">JP PANAH4D</a>
+    <a href="#prediksi">Prediksi</a>
+    <a href="#jadwal">Jadwal</a>
+    <a href="#provider">Provider</a>
+  </nav>
+
+  <!-- TANGGAL OTOMATIS -->
+  <span class="navmeta" id="dateLabel"></span>
+
+</div>
+
 </header>
 
 <main class="wrap">
@@ -1191,6 +1399,22 @@ header .wrap.nav {
 <p>Prediksi skor dan peluang otomatis berbasis estimasi sederhana.</p>
 </div>
 </div>
+  
+<!-- SEARCH PREDIKSI LIGA -->
+<div class="league-search">
+  <span class="search-icon">⌕</span>
+  <input
+    type="search"
+    id="leagueSearch"
+    placeholder="Cari liga atau nama tim..."
+    autocomplete="off"
+    aria-label="Cari liga atau tim"
+  >
+  <button type="button" id="clearLeagueSearch" aria-label="Hapus pencarian">
+    ✕
+  </button>
+</div>
+
 <div class="league-slider">
 
   <button class="league-arrow prev"
@@ -1341,33 +1565,44 @@ header .wrap.nav {
 </div>
 </div>
 <div class="providers">
-<a class="provider" href="#provider">
-<span class="provider-logo">TF</span>
-<span>
-<b>THUNDER FIRE</b>
-<small>Sportsbook</small>
-</span>
+<a class="provider"
+   href="#provider"
+   onclick="window.open('https://panahkawan.com', '_blank'); return false;">
+  <span class="provider-logo">TF</span>
+  <span>
+    <b>THUNDER FIRE</b>
+    <small>Sportsbook</small>
+  </span>
 </a>
-<a class="provider" href="#provider">
-<span class="provider-logo">SB</span>
-<span>
-<b>SBOBET</b>
-<small>Sportsbook</small>
-</span>
+
+<a class="provider"
+   href="#provider"
+   onclick="window.open('https://panahkawan.com', '_blank'); return false;">
+  <span class="provider-logo">SB</span>
+  <span>
+    <b>SBOBET</b>
+    <small>Sportsbook</small>
+  </span>
 </a>
-<a class="provider" href="#provider">
-<span class="provider-logo">SA</span>
-<span>
-<b>SABA Sports</b>
-<small>Sportsbook</small>
-</span>
+
+<a class="provider"
+   href="#provider"
+   onclick="window.open('https://panahkawan.com', '_blank'); return false;">
+  <span class="provider-logo">SA</span>
+  <span>
+    <b>SABA Sports</b>
+    <small>Sportsbook</small>
+  </span>
 </a>
-<a class="provider" href="#provider">
-<span class="provider-logo">CMD</span>
-<span>
-<b>CMD368</b>
-<small>Sportsbook</small>
-</span>
+
+<a class="provider"
+   href="#provider"
+   onclick="window.open('https://panahkawan.com', '_blank'); return false;">
+  <span class="provider-logo">CMD</span>
+  <span>
+    <b>CMD368</b>
+    <small>Sportsbook</small>
+  </span>
 </a>
 </div>
 <p class="note"></p>
@@ -1382,8 +1617,28 @@ header .wrap.nav {
 <div>© <span id="year">
 </span> PANAH4D</div>
 </div>
+<style>
+
+.bottom-gif{
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.bottom-gif img{
+    width: 100%;
+    display: block;
+}
+</style>
+  <br/>
+<div class="bottom-gif">
+    <img src="https://i.postimg.cc/mrYdMD9r/gifkz.gif" alt="GIF">
+</div>
 </footer>
-  <!-- Jumpscare Overlay -->
+    <!-- Jumpscare Overlay -->
 <div id="jumpscare">
     <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjSuuJqpibWPXrWYyiskpwy6rnx9FCYcQjtxJ0_PHU7KqXIdm_XcyDLUpbJzT509HCNOrcSKHzQiWnBOftivsF4_YU7pgbC4YRvSdyHIGQsq4g50VFwPyufegHLR9-CGceGwIhyhF3h8QYwpjvbRnQgDH6Euw6AYs7P54tZT5cU5f7XvqqcjJAENS8fXEY3" alt="Scary">
 </div>
@@ -1415,6 +1670,173 @@ header .wrap.nav {
     50%{background:#fff;}
     100%{background:#000;}
 }
+  
+
+/* ===== POSISI NAVBAR SEMUA DEVICE ===== */
+
+header {
+  height: 68px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header .wrap.nav {
+  width: calc(100% - 24px);
+  max-width: 1400px;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  position: relative;
+  overflow: visible;
+}
+
+/* LOGO KIRI */
+header .brand {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+header .brand-logo {
+  display: block;
+  width: 180px;
+  height: 45px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* TANGGAL SEBELUM MENU */
+header .navmeta {
+  order: 2;
+  margin-left: 8px;
+  margin-right: auto;
+  flex: 0 0 auto;
+  color: #ddd;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* TOMBOL MENU DI KANAN */
+header .menu-toggle {
+  order: 3;
+  flex: 0 0 auto;
+  margin-left: auto;
+  margin-right: 0;
+  padding: 10px 16px;
+  border: 1px solid #ffb33f;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffc857, #ff941f);
+  color: #241506;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* DROPDOWN TEPAT DI BAWAH MENU */
+header #navMenu.navlinks {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: auto;
+  right: 0;
+  width: 210px;
+  max-width: calc(100vw - 20px);
+  padding: 7px;
+  flex-direction: column;
+  gap: 3px;
+  background: linear-gradient(145deg, #21150b, #120e0a);
+  border: 1px solid #d88923;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 12px 28px #0005;
+  z-index: 1001;
+}
+
+header #navMenu.navlinks.open {
+  display: flex !important;
+}
+
+header #navMenu.navlinks a {
+  display: block;
+  padding: 11px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+header #navMenu.navlinks a:hover {
+  background: #39230e;
+  color: #ffc857;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  header .brand-logo {
+    width: 140px;
+  }
+
+  header .wrap.nav {
+    gap: 10px;
+  }
+}
+
+/* HP */
+@media (max-width: 600px) {
+  header {
+    height: 49px;
+  }
+
+  header .wrap.nav {
+    width: calc(100% - 16px);
+    gap: 8px;
+  }
+
+  header .brand-logo {
+    width: 100px;
+    height: 34px;
+  }
+
+  header .navmeta {
+    display: none;
+  }
+
+  header .menu-toggle {
+    margin-left: auto;
+    padding: 8px 11px;
+    font-size: 10px;
+  }
+
+  header #navMenu.navlinks {
+    top: 100%;
+    right: 0;
+    width: 175px;
+  }
+
+  header #navMenu.navlinks a {
+    padding: 9px;
+    font-size: 10px;
+  }
+}
+
+/* HP SANGAT KECIL */
+@media (max-width: 350px) {
+  header .brand-logo {
+    width: 85px;
+  }
+
+  header .wrap.nav {
+    gap: 6px;
+  }
+
+  header .menu-toggle {
+    padding: 7px 9px;
+  }
+}
+
+
 </style>
 
 <script>
@@ -1797,12 +2219,25 @@ function card(g){return `<article class="match-card">
 ${predictionPanel(g)}
 <div class="match-foot">
 <span>${esc(dt(g.date))}</span>
-<button class="detail" data-select="${esc(g.id)}">LIHAT LAGA ↗</button>
+<a class="detail"
+   href="https://panahkawan.com"
+   target="_blank"
+   rel="noopener noreferrer">
+  PASANG TARUHAN
+</a>
 </div>
 </div>
 </article>`}
 function fixture(g){return `<div class="fixture">
-<span class="time">${esc(tm(g.date))}</span>
+<span class="time">
+  ${new Date(g.date).toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    timeZone: "Asia/Jakarta"
+  })}
+  <br>
+  ${esc(tm(g.date))}
+</span>
 <span class="league">${esc(g.league)}</span>
 <span class="pair">
 <span class="fixture-team">${img(g.home)}<b>${esc(g.home.name)}</b>
@@ -1876,7 +2311,141 @@ restart();
 $("prev").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex-1+games.length)%games.length;renderHero();restart()};$("next").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex+1)%games.length;renderHero();restart()};$("reload").onclick=load;
 document.querySelectorAll("[data-league]").forEach(b=>b.onclick=()=>{leagueFilter=b.dataset.league;
 document.querySelectorAll("[data-league]").forEach(x=>x.classList.toggle("active",x===b));renderCards()});
-document.addEventListener("visibilitychange",()=>{if(document.hidden)clearInterval(timer);else restart()});load();</script>
+document.addEventListener("visibilitychange",()=>{if(document.hidden)clearInterval(timer);else restart()});load();
+
+const menuToggle = document.getElementById("menuToggle");
+const navMenu = document.getElementById("navMenu");
+
+function closeNavMenu() {
+  navMenu.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.textContent = "☰ MENU";
+}
+
+menuToggle.addEventListener("click", function (event) {
+  event.stopPropagation();
+
+  const isOpen = navMenu.classList.contains("open");
+
+  if (isOpen) {
+    closeNavMenu();
+  } else {
+    navMenu.classList.add("open");
+    menuToggle.setAttribute("aria-expanded", "true");
+    menuToggle.textContent = "✕ TUTUP MENU";
+  }
+});
+
+navMenu.addEventListener("click", function (event) {
+  const link = event.target.closest("a");
+  if (!link) return;
+
+  const href = link.getAttribute("href");
+
+  if (href && href.startsWith("#")) {
+    const target = document.getElementById(href.slice(1));
+
+    if (target) {
+      event.preventDefault();
+      closeNavMenu();
+
+      setTimeout(function () {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+        history.replaceState(null, "", href);
+      }, 50);
+    } else {
+      closeNavMenu();
+    }
+  } else {
+    closeNavMenu();
+  }
+});
+
+document.addEventListener("click", function (event) {
+  if (
+    !navMenu.contains(event.target) &&
+    !menuToggle.contains(event.target)
+  ) {
+    closeNavMenu();
+  }
+});
+
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
+    closeNavMenu();
+  }
+});
+  
+(function () {
+  const searchInput = document.getElementById("leagueSearch");
+  const clearButton = document.getElementById("clearLeagueSearch");
+  const leagueFilters = document.getElementById("leagueFilters");
+  const matchGrid = document.getElementById("matchGrid");
+
+  if (!searchInput || !leagueFilters || !matchGrid) return;
+
+  const leagueButtons = Array.from(
+    leagueFilters.querySelectorAll(".filter")
+  );
+
+  function runLeagueSearch() {
+    const query = searchInput.value.trim().toLocaleLowerCase("id");
+
+    clearButton.classList.toggle("visible", query.length > 0);
+
+    // Cari liga berdasarkan nama liga atau kode data
+    leagueButtons.forEach(function (button) {
+      const text = button.textContent.toLocaleLowerCase("id");
+      const code = (button.dataset.league || "").toLocaleLowerCase("id");
+
+      button.hidden = query !== "" &&
+        button.dataset.league !== "all" &&
+        !text.includes(query) &&
+        !code.includes(query);
+
+      // Tombol Semua Liga tetap tersedia
+      if (button.dataset.league === "all") {
+        button.hidden = false;
+      }
+    });
+
+    // Saat pencarian diisi, tampilkan semua kartu yang cocok
+    const cards = Array.from(matchGrid.children);
+
+    cards.forEach(function (card) {
+      const text = card.textContent.toLocaleLowerCase("id");
+      const matches = query === "" || text.includes(query);
+
+      card.hidden = !matches;
+    });
+
+    // Saat search kosong, kembalikan tampilan filter normal
+    if (query === "") {
+      leagueButtons.forEach(function (button) {
+        button.hidden = false;
+      });
+
+      matchGrid.querySelectorAll("[hidden]").forEach(function (card) {
+        card.hidden = false;
+      });
+    }
+  }
+
+  searchInput.addEventListener("input", runLeagueSearch);
+
+  clearButton.addEventListener("click", function () {
+    searchInput.value = "";
+    runLeagueSearch();
+    searchInput.focus();
+  });
+})();
+
+  </script>
 <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=27c58f31-4c95-41cf-8e12-b7a110227e14"> </script>
+
 </body>
 </html>
