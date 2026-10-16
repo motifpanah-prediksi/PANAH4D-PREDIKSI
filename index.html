@@ -1176,8 +1176,54 @@ let d=await r.json();return(d.events||[]).map(e=>parse(e,l)).filter(Boolean)}
 function restart(){clearInterval(timer);
 if(games.length>1)timer=setInterval(()=>{slideIndex=(slideIndex+1)%games.length;renderHero()},5000)}
 async function load(){ $("heroContent").innerHTML='<div style="padding:55px 5px;text-align:center;color:#b7c2ce">Memuat Pertandingan PANAH4D</div>';
-const results=await Promise.allSettled(leagues.map(fetchLeague));games=results.flatMap(r=>r.status==="fulfilled"?r.value:[]).sort((a,b)=>new Date(a.date)-new Date(b.date));
-if(!games.length){$("heroContent").innerHTML='<div style="padding:45px 5px;text-align:center;color:#b7c2ce">Data ESPN belum tersedia. Periksa koneksi atau konfigurasi proxy jika akses CORS diblokir.</div>';$("matchGrid").innerHTML='<div style="padding:20px;color:#7b8795">Pertandingan tidak dapat dimuat.</div>';$("fixtureList").innerHTML='<div style="padding:20px;color:#7b8795">Jadwal tidak tersedia.</div>';return}slideIndex=0;renderHero();renderCards();renderFixtures();restart()}
+const results = await Promise.allSettled(
+  leagues.map(fetchLeague)
+);
+
+const allGames = results.flatMap(r =>
+  r.status === "fulfilled" ? r.value : []
+);
+
+const now = Date.now();
+
+games = [
+  ...new Map(
+    allGames.map(g => [String(g.id), g])
+  ).values()
+]
+.filter(g => {
+  const kickoff = new Date(g.date).getTime();
+
+  // Tampilkan hanya pertandingan yang belum dimulai
+  return Number.isFinite(kickoff) && kickoff > now;
+})
+.sort((a, b) =>
+  new Date(a.date) - new Date(b.date)
+);
+
+if (!games.length) {
+  $("heroContent").innerHTML =
+    '<div style="padding:45px 5px;text-align:center;color:#b7c2ce">Belum ada pertandingan mendatang yang tersedia.</div>';
+
+  $("counter").textContent = "MATCH 00 / 00";
+  $("dots").innerHTML = "";
+
+  $("matchGrid").innerHTML =
+    '<div style="padding:20px;color:#7b8795">Pertandingan mendatang belum tersedia.</div>';
+
+  $("fixtureList").innerHTML =
+    '<div style="padding:20px;color:#7b8795">Jadwal mendatang belum tersedia.</div>';
+
+  clearInterval(timer);
+  return;
+}
+
+slideIndex = 0;
+renderHero();
+renderCards();
+renderFixtures();
+restart();
+}
 $("prev").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex-1+games.length)%games.length;renderHero();restart()};$("next").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex+1)%games.length;renderHero();restart()};$("reload").onclick=load;
 document.querySelectorAll("[data-league]").forEach(b=>b.onclick=()=>{leagueFilter=b.dataset.league;
 document.querySelectorAll("[data-league]").forEach(x=>x.classList.toggle("active",x===b));renderCards()});
