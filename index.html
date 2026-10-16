@@ -619,64 +619,86 @@ main {
   }
 }
 
-  
-/* CONTAINER FILTER LIGA */
-.league-filters {
+
+/* WRAPPER FILTER */
+.league-slider {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 12px 0 16px;
+}
+
+/* AREA SLIDER */
+.league-slider .league-filters {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   gap: 8px;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-  padding: 8px 4px 12px;
+  padding: 5px 2px 10px;
   scroll-behavior: smooth;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
 
-.league-filters::-webkit-scrollbar {
+.league-slider .league-filters::-webkit-scrollbar {
   display: none;
 }
 
-/* TOMBOL FILTER */
-.league-filters .filter {
-  flex: 0 0 auto;
-  white-space: nowrap;
-  padding: 10px 16px;
-  border: 1px solid #d9e0e8;
+/* PANAH KIRI DAN KANAN */
+.league-slider .league-arrow {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 36px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #d6dee8;
   border-radius: 8px;
   background: #ffffff;
-  color: #34445a;
-  font-size: 12px;
-  font-weight: 600;
+  color: #182538;
+  font-size: 16px;
+  line-height: 1;
   cursor: pointer;
-  transition: 0.2s ease;
+  align-self: center;
+  transform: none;
 }
 
-/* FILTER AKTIF */
-.league-filters .filter.active {
+.league-slider .league-arrow:hover {
   background: #101b2d;
-  color: #ffffff;
   border-color: #101b2d;
+  color: #ffffff;
 }
 
-/* HOVER DESKTOP */
-.league-filters .filter:hover {
-  border-color: #c99735;
+/* TOMBOL LIGA */
+.league-slider .filter {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 /* TAMPILAN HP */
 @media (max-width: 768px) {
-  .league-filters {
-    gap: 6px;
-    padding: 6px 2px 10px;
+  .league-slider {
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
+    gap: 5px;
   }
 
-  .league-filters .filter {
-    padding: 9px 12px;
-    font-size: 11px;
-    border-radius: 7px;
+  .league-slider .league-arrow {
+    width: 28px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .league-slider .league-filters {
+    gap: 6px;
   }
 }
 
