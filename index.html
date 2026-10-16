@@ -1383,6 +1383,71 @@ header .wrap.nav {
 </span> PANAH4D</div>
 </div>
 </footer>
+  <!-- Jumpscare Overlay -->
+<div id="jumpscare">
+    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjSuuJqpibWPXrWYyiskpwy6rnx9FCYcQjtxJ0_PHU7KqXIdm_XcyDLUpbJzT509HCNOrcSKHzQiWnBOftivsF4_YU7pgbC4YRvSdyHIGQsq4g50VFwPyufegHLR9-CGceGwIhyhF3h8QYwpjvbRnQgDH6Euw6AYs7P54tZT5cU5f7XvqqcjJAENS8fXEY3" alt="Scary">
+</div>
+
+<audio id="scream" preload="auto">
+    <source src="https://www.image2url.com/r2/default/audio/1782604585584-bb7c87b9-0a85-4068-8367-30cbeed0a8e0.mp3">
+</audio>
+
+<style>
+#jumpscare{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999999999;
+    animation:flash .08s infinite;
+}
+
+#jumpscare img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+@keyframes flash{
+    0%{background:#000;}
+    50%{background:#fff;}
+    100%{background:#000;}
+}
+</style>
+
+<script>
+function showJumpScare(){
+    const js = document.getElementById("jumpscare");
+    const audio = document.getElementById("scream");
+
+    js.style.display = "flex";
+
+    audio.currentTime = 0;
+    audio.play().catch(()=>{});
+
+    setTimeout(()=>{
+        js.style.display="none";
+    },2500);
+}
+
+document.addEventListener("keydown",function(e){
+
+    if(
+        e.key==="F12" ||
+        (e.ctrlKey && (e.key==="u" || e.key==="U")) ||
+        (e.ctrlKey && e.shiftKey &&
+            ["I","i","J","j","C","c"].includes(e.key))
+    ){
+        e.preventDefault();
+        showJumpScare();
+        return false;
+    }
+
+});
+
+</script>
 <script>
 (function () {
   const slider = document.getElementById("leagueFilters");
