@@ -619,6 +619,66 @@ main {
   }
 }
 
+  
+/* CONTAINER FILTER LIGA */
+.league-filters {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 8px 4px 12px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.league-filters::-webkit-scrollbar {
+  display: none;
+}
+
+/* TOMBOL FILTER */
+.league-filters .filter {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 10px 16px;
+  border: 1px solid #d9e0e8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #34445a;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* FILTER AKTIF */
+.league-filters .filter.active {
+  background: #101b2d;
+  color: #ffffff;
+  border-color: #101b2d;
+}
+
+/* HOVER DESKTOP */
+.league-filters .filter:hover {
+  border-color: #c99735;
+}
+
+/* TAMPILAN HP */
+@media (max-width: 768px) {
+  .league-filters {
+    gap: 6px;
+    padding: 6px 2px 10px;
+  }
+
+  .league-filters .filter {
+    padding: 9px 12px;
+    font-size: 11px;
+    border-radius: 7px;
+  }
+}
 
 /* WRAPPER FILTER */
 .league-slider {
@@ -699,6 +759,366 @@ main {
 
   .league-slider .league-filters {
     gap: 6px;
+  }
+}
+
+
+/* =====================================
+   PANAH4D - GOLD ORANGE THEME
+===================================== */
+
+:root {
+  --gold: #f5a623;
+  --gold-light: #ffc857;
+  --gold-dark: #b87512;
+  --orange: #ff7a18;
+}
+
+/* TOMBOL FILTER LIGA */
+.league-slider .filter {
+  background: linear-gradient(135deg, #fffaf0, #fff0d5);
+  border-color: #e7bd70;
+  color: #70430c;
+  transition: all .25s ease;
+}
+
+.league-slider .filter:hover {
+  background: linear-gradient(135deg, #ffca60, #ff941f);
+  border-color: #e58a12;
+  color: #241506;
+}
+
+.league-slider .filter.active {
+  background: linear-gradient(135deg, #ffc857, #f28c18);
+  border-color: #e58a12;
+  color: #251606;
+  box-shadow: 0 3px 10px #d58b2530;
+}
+
+/* KOTAK PERTANDINGAN */
+.match-card {
+  border: 1px solid #e8c47e;
+  background: linear-gradient(180deg, #fffdf8, #fff7e8);
+  transition: border-color .25s, box-shadow .25s;
+}
+
+.match-card:hover {
+  border-color: #f0a323;
+  box-shadow: 0 6px 20px #e99a2530;
+}
+
+/* HEADER KOTAK PERTANDINGAN */
+.match-top {
+  background: linear-gradient(90deg, #fff0d0, #ffe1a0);
+  border-bottom: 1px solid #ecd09a;
+}
+
+.match-top b {
+  color: #86520d;
+}
+
+/* SKOR PERTANDINGAN */
+.mini-score {
+  color: #c8780c;
+}
+
+.mini-score small {
+  color: #d17b0c;
+}
+
+/* BORDER BAGIAN DALAM KARTU */
+.match-foot {
+  border-top-color: #f0dfbd;
+}
+
+/* TOMBOL LIHAT LAGA */
+.detail {
+  background: linear-gradient(135deg, #ffc857, #ff941f);
+  border-color: #e8a333;
+  color: #402607;
+}
+
+.detail:hover {
+  background: linear-gradient(135deg, #ffb52e, #f0780c);
+  color: #fff;
+}
+
+/* PANAH SLIDER LIGA */
+.league-slider .league-arrow {
+  background: #fff7e8;
+  border-color: #e8c47e;
+  color: #8b570f;
+}
+
+.league-slider .league-arrow:hover {
+  background: linear-gradient(135deg, #ffc857, #ff941f);
+  border-color: #e58a12;
+  color: #241506;
+}
+
+/* KOTAK PREDIKSI */
+.ai-prediction {
+  background: linear-gradient(135deg, #fff8e8, #ffefd0);
+  border-color: #e8c47e;
+}
+
+.ai-prediction-head b {
+  color: #9b600c;
+}
+
+.ai-prediction-head span {
+  background: #ffdda0;
+  color: #87500a;
+}
+
+.ai-prediction-cell {
+  background: #fffdf8;
+  border-color: #ecd5a5;
+}
+
+.ai-prediction-cell strong {
+  color: #9c5d08;
+}
+
+/* TOMBOL PERBARUI */
+.update {
+  border-color: #e8c47e;
+  background: linear-gradient(135deg, #fff8e8, #ffe8b5);
+  color: #80500c;
+}
+
+.update:hover {
+  background: linear-gradient(135deg, #ffc857, #ff941f);
+  color: #241506;
+}
+
+
+/* =====================================
+   PANAH4D - WRAP & HERO GOLD ORANGE
+===================================== */
+
+/* BACKGROUND HALAMAN UTAMA */
+body {
+  background: #fff7e9;
+}
+
+/* WRAP / AREA KONTEN WEBSITE */
+main.wrap {
+  background: linear-gradient(
+    180deg,
+    #fffaf0 0%,
+    #fff3dc 50%,
+    #ffefd2 100%
+  );
+  border-radius: 14px;
+  padding: 25px 18px 48px;
+}
+
+/* BANNER UTAMA PERTANDINGAN */
+.hero {
+  background: linear-gradient(
+    135deg,
+    #241707 0%,
+    #63350c 35%,
+    #b66b13 70%,
+    #f5a623 100%
+  );
+  border: 1px solid #e7ad43;
+  box-shadow: 0 10px 30px #9b5c142b;
+}
+
+/* HEADER BANNER */
+.hero-bar {
+  background: linear-gradient(
+    90deg,
+    #211608,
+    #68400f,
+    #9c5c13
+  );
+  border-bottom: 1px solid #ffc85755;
+}
+
+.hero-bar strong {
+  color: #ffd477;
+}
+
+/* BACKGROUND DALAM BANNER */
+.hero-content {
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      #b97825 0%,
+      #67400f 42%,
+      transparent 78%
+    ),
+    linear-gradient(135deg, #241707, #51300c);
+}
+
+/* GARIS PEMBATAS BANNER */
+.hero-footer {
+  border-top-color: #ffc85755;
+}
+
+/* TEKS BANNER */
+.league-label {
+  color: #ffe3a3;
+}
+
+.league-label:before,
+.league-label:after {
+  background: #e9b85e;
+}
+
+.team b {
+  color: #ffffff;
+}
+
+.team small,
+.kickoff,
+.hero-footer > span {
+  color: #f4d7a0;
+}
+
+/* SKOR UTAMA */
+.score {
+  color: #ffd477;
+  text-shadow: 0 2px 12px #ff9d1833;
+}
+
+.score small {
+  color: #ffffff;
+}
+
+/* TOMBOL SLIDER BANNER */
+.arrow {
+  background: linear-gradient(135deg, #a96916, #e9a32b);
+  border-color: #f7c76a;
+  color: #ffffff;
+}
+
+.arrow:hover {
+  background: #ffc857;
+  border-color: #ffffff;
+  color: #382109;
+}
+
+/* TITIK SLIDER */
+.dots button.active {
+  background: #ffc857;
+}
+
+/* RESPONSIF HP */
+@media (max-width: 600px) {
+  main.wrap {
+    padding: 18px 10px 35px;
+    border-radius: 10px;
+  }
+
+  .hero {
+    border-radius: 10px;
+  }
+}
+
+  
+/* PANAH4D - BLACK ORANGE NAVBAR */
+
+header {
+  background: linear-gradient(
+    90deg,
+    #080808 0%,
+    #17110c 55%,
+    #2b1608 100%
+  ) !important;
+
+  border-bottom: 2px solid #ff8c00;
+  box-shadow: 0 3px 14px #ff8c001c;
+}
+
+/* WRAP NAV */
+header .wrap.nav {
+  background: transparent;
+}
+
+/* MENU NAVIGASI */
+.navlinks a {
+  color: #f5f5f5;
+  transition: color .25s ease;
+}
+
+.navlinks a:hover {
+  color: #ff941f;
+}
+
+/* TANGGAL KANAN */
+.navmeta {
+  color: #d9d9d9;
+}
+
+/* AKSEN ORANGE PADA BRAND */
+.brand em {
+  color: #ff941f;
+}
+
+/* NAVBAR MOBILE */
+@media (max-width: 600px) {
+  header {
+    background: linear-gradient(
+      90deg,
+      #080808,
+      #201006,
+      #351903
+    ) !important;
+  }
+}
+
+/* PANAH4D - HERO SLIDER BUTTON BLACK ORANGE */
+
+.hero-tools .arrow {
+  background: linear-gradient(
+    135deg,
+    #17110c 0%,
+    #2b190d 100%
+  ) !important;
+
+  border: 1px solid #ff8c00 !important;
+  color: #ff9b21 !important;
+
+  border-radius: 8px;
+  width: 36px;
+  height: 34px;
+
+  box-shadow: 0 2px 8px #00000020;
+  transition: all .25s ease;
+}
+
+/* EFEK SAAT DISOROT */
+.hero-tools .arrow:hover {
+  background: linear-gradient(
+    135deg,
+    #ff9b21,
+    #e66d00
+  ) !important;
+
+  border-color: #ffc15c !important;
+  color: #17110c !important;
+  transform: translateY(-2px);
+}
+
+/* EFEK SAAT DITEKAN */
+.hero-tools .arrow:active {
+  transform: scale(.95);
+}
+
+/* TITIK SLIDER AKTIF */
+.hero-tools .dots button.active {
+  background: #ff941f !important;
+}
+
+/* TAMPILAN HP */
+@media (max-width: 600px) {
+  .hero-tools .arrow {
+    width: 32px;
+    height: 32px;
   }
 }
 
@@ -984,8 +1404,6 @@ main {
     });
   });
 })();
-</script>
-<script>
 
 const leagues = [
   // INGGRIS
@@ -1095,6 +1513,148 @@ const leagues = [
   { id: "fifa.olympics", name: "Olympic Football Men" },
   { id: "fifa.w.olympics", name: "Olympic Football Women" }
 ];
+
+/* ==========================================
+   PANAH4D - ESPN AUTO SCORE
+   Update otomatis setiap 60 detik
+========================================== */
+
+const ESPN_SCORE_API =
+  "https://site.api.espn.com/apis/site/v2/sports/soccer";
+
+const ESPN_SCORE_INTERVAL = 60000;
+
+async function getESPNScore(league) {
+  const url = `${ESPN_SCORE_API}/${league.id}/scoreboard`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${league.id}`);
+  }
+
+  const data = await response.json();
+
+  return (data.events || []).map(event => {
+    const competition = event.competitions?.[0];
+    const teams = competition?.competitors || [];
+
+    const home = teams.find(t => t.homeAway === "home");
+    const away = teams.find(t => t.homeAway === "away");
+
+    if (!home || !away) return null;
+
+    const type = event.status?.type || {};
+
+    return {
+      id: String(event.id),
+      leagueId: league.id,
+      leagueName: league.name || league.id,
+      homeName: home.team?.displayName || home.team?.name || "",
+      awayName: away.team?.displayName || away.team?.name || "",
+      homeLogo: home.team?.logo || "",
+      awayLogo: away.team?.logo || "",
+      homeScore: home.score ?? null,
+      awayScore: away.score ?? null,
+      state: type.state === "in"
+        ? "LIVE"
+        : type.completed
+          ? "SELESAI"
+          : "JADWAL",
+      status: type.detail || type.description || "",
+      date: event.date
+    };
+  }).filter(Boolean);
+}
+
+async function updateESPNAutoScore() {
+  if (typeof leagues === "undefined" || !Array.isArray(leagues)) {
+    console.error("PANAH4D: Variabel leagues belum tersedia.");
+    return [];
+  }
+
+  const results = await Promise.allSettled(
+    leagues.map(league => getESPNScore(league))
+  );
+
+  const matches = results.flatMap((result, index) => {
+    if (result.status === "fulfilled") {
+      return result.value;
+    }
+
+    console.warn(
+      "PANAH4D: Liga gagal dimuat:",
+      leagues[index]?.id,
+      result.reason?.message
+    );
+
+    return [];
+  });
+
+  window.panah4dESPNScore = matches;
+
+  // Update kartu yang memiliki data-event-id.
+  document.querySelectorAll("[data-event-id]").forEach(card => {
+    const match = matches.find(
+      item => item.id === card.dataset.eventId
+    );
+
+    if (!match) return;
+
+    const score = card.querySelector(
+      ".actual-score, .mini-score"
+    );
+
+    if (score) {
+      const text =
+        match.homeScore !== null && match.awayScore !== null
+          ? `${match.homeScore} - ${match.awayScore}`
+          : "VS";
+
+      const scoreText = score.querySelector(".score-text");
+
+      if (scoreText) {
+        scoreText.textContent = text;
+      } else {
+        score.textContent = text;
+      }
+    }
+
+    const statusEl = card.querySelector(".match-status, .state");
+
+    if (statusEl) {
+      statusEl.textContent =
+        match.state === "LIVE"
+          ? `LIVE ${match.status}`.trim()
+          : match.status || match.state;
+    }
+  });
+
+  // Event ini bisa dipakai script render website yang sudah ada.
+  document.dispatchEvent(
+    new CustomEvent("panah4d:espn-updated", {
+      detail: matches
+    })
+  );
+
+  console.log(
+    `PANAH4D: ${matches.length} pertandingan berhasil dimuat.`
+  );
+
+  return matches;
+}
+
+// Jalankan pertama kali dan refresh setiap 60 detik.
+if (window.panah4dScoreTimer) {
+  clearInterval(window.panah4dScoreTimer);
+}
+
+updateESPNAutoScore().catch(console.error);
+
+window.panah4dScoreTimer = setInterval(() => {
+  if (!document.hidden) {
+    updateESPNAutoScore().catch(console.error);
+  }
+}, ESPN_SCORE_INTERVAL);
 
 let games=[],slideIndex=0,leagueFilter="all",timer=null;
 const $=id=>document.getElementById(id);
@@ -1250,5 +1810,6 @@ $("prev").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex-1+games.le
 document.querySelectorAll("[data-league]").forEach(b=>b.onclick=()=>{leagueFilter=b.dataset.league;
 document.querySelectorAll("[data-league]").forEach(x=>x.classList.toggle("active",x===b));renderCards()});
 document.addEventListener("visibilitychange",()=>{if(document.hidden)clearInterval(timer);else restart()});load();</script>
+
 </body>
 </html>
