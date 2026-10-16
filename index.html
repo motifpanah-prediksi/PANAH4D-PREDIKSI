@@ -1165,43 +1165,220 @@ function fixture(g){return `<div class="fixture">
 <span class="actual-score">${g.home.score!=null&&g.away.score!=null?`${esc(g.home.score)}-${esc(g.away.score)}`:"–"}</span>
 <span class="state ${g.state==="LIVE"?"live":""}">${g.state==="LIVE"?"LIVE":g.state==="SELESAI"?"SELESAI":"JADWAL"}</span>
 </div>`}
-function renderCards(){let list=games.filter(g=>leagueFilter==="all"||g.lid===leagueFilter);$("matchGrid").innerHTML=list.length?list.map(card).join(""):'<div style="padding:20px;color:#7b8795">Tidak ada pertandingan di liga ini.</div>';
-document.querySelectorAll("[data-select]").forEach(b=>b.onclick=()=>{let i=games.findIndex(g=>g.id===b.dataset.select);
-if(i>=0){slideIndex=i;renderHero();restart();
-document.querySelector(".hero").scrollIntoView({behavior:"smooth"})}})}
-function renderFixtures(){let list=games.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));$("fixtureList").innerHTML=list.length?list.map(fixture).join(""):'<div style="padding:22px;text-align:center;color:#7b8795">Jadwal belum tersedia.</div>'}
-async 
-function wibDateKey(value) {
-  const d = new Date(new Date(value).getTime() + 7 * 60 * 60 * 1000);
-  return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
+
+function renderCards() {
+  const list = games.filter(
+    g => leagueFilter === "all" || g.lid === leagueFilter
+  );
+
+  $("matchGrid").innerHTML = list.length
+    ? list.map(card).join("")
+    : '<div style="padding:20px;color:#7b8795">Tidak ada pertandingan pada tanggal ini di liga tersebut.</div>';
+
+  document.querySelectorAll("[data-select]").forEach(button => {
+    button.onclick = () => {
+      const index = games.findIndex(g => g.id === button.dataset.select);
+
+      if (index >= 0) {
+        slideIndex = index;
+        renderHero();
+        restart();
+        document.querySelector(".hero")?.scrollIntoView({
+          behavior: "smooth"
+        });
+      }
+    };
+  });
 }
 
+function renderFixtures() {
+  const list = games
+    .slice()
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  $("fixtureList").innerHTML = list.length
+    ? list.map(fixture).join("")
+    : '<div style="padding:22px;text-align:center;color:#7b8795">Jadwal belum tersedia.</div>';
+}
+
+// Mengubah waktu menjadi tanggal kalender WIB: YYYYMMDD.
+function wibDateKey(value) {
+  const date = new Date(
+    new Date(value).getTime() + 7 * 60 * 60 * 1000
+  );
+
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+
+  return `${year}${month}${day}`;
+}
+
+// Mengambil jadwal ESPN melalui Cloudflare Worker.
+// Hanya pertandingan hari ini dan lusa yang dipertahankan.
 async function fetchLeague(l) {
-  const today = wibDateKey(Date.now());
-  const lusa = wibDateKey(Date.now() + 2 * 24 * 60 * 60 * 1000);
+  const now = Date.now();
+  const today = wibDateKey(now);
+  const lusa = wibDateKey(now + 2 * 24 * 60 * 60 * 1000);
 
-  const url = `https://panah4d-espn-api.motifpanah.workers.dev/matches?league=${encodeURIComponent(l.id)}&dates=${today}-${lusa}`;
-  const r = await fetch(url);
+  const url =
+    "https://panah4d-espn-api.motifpanah.workers.dev/matches" +
+    `?league=${encodeURIComponent(l.id)}` +
+    `&dates=${today}-${lusa}`;
 
-  if (!r.ok) throw Error("API " + l.id + ": " + r.status);
+  const response = await fetch(url);
 
-  const d = await r.json();
+  if (!response.ok) {
+    throw new Error(`API ${l.id}: HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
   const allowedDates = new Set([today, lusa]);
 
-  return (d.events || [])
-    .map(e => parse(e, l))
-    .filter(g => g && g.date && allowedDates.has(wibDateKey(g.date)));
+  return (data.events || [])
+    .map(event => parse(event, l))
+    .filter(game =>
+      game &&
+      game.date &&
+      allowedDates.has(wibDateKey(game.date))
+    );
 }
-  
-function restart(){clearInterval(timer);
-if(games.length>1)timer=setInterval(()=>{slideIndex=(slideIndex+1)%games.length;renderHero()},5000)}
-async function load(){ $("heroContent").innerHTML='<div style="padding:55px 5px;text-align:center;color:#b7c2ce">Memuat Pertandingan PANAH4D</div>';
-const results=await Promise.allSettled(leagues.map(fetchLeague));games=results.flatMap(r=>r.status==="fulfilled"?r.value:[]).sort((a,b)=>new Date(a.date)-new Date(b.date));
-if(!games.length){$("heroContent").innerHTML='<div style="padding:45px 5px;text-align:center;color:#b7c2ce">Data ESPN belum tersedia. Periksa koneksi atau konfigurasi proxy jika akses CORS diblokir.</div>';$("matchGrid").innerHTML='<div style="padding:20px;color:#7b8795">Pertandingan tidak dapat dimuat.</div>';$("fixtureList").innerHTML='<div style="padding:20px;color:#7b8795">Jadwal tidak tersedia.</div>';return}slideIndex=0;renderHero();renderCards();renderFixtures();restart()}
-$("prev").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex-1+games.length)%games.length;renderHero();restart()};$("next").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex+1)%games.length;renderHero();restart()};$("reload").onclick=load;
-document.querySelectorAll("[data-league]").forEach(b=>b.onclick=()=>{leagueFilter=b.dataset.league;
-document.querySelectorAll("[data-league]").forEach(x=>x.classList.toggle("active",x===b));renderCards()});
-document.addEventListener("visibilitychange",()=>{if(document.hidden)clearInterval(timer);else restart()});load();
+
+function restart() {
+  clearInterval(timer);
+
+  if (games.length > 1) {
+    timer = setInterval(() => {
+      slideIndex = (slideIndex + 1) % games.length;
+      renderHero();
+    }, 5000);
+  }
+}
+
+async function load() {
+  const reloadButton = $("reload");
+
+  if (reloadButton) {
+    reloadButton.disabled = true;
+    reloadButton.textContent = "MEMUAT PERTANDINGAN...";
+  }
+
+  $("heroContent").innerHTML =
+    '<div style="padding:55px 5px;text-align:center;color:#b7c2ce">Memuat pertandingan PANAH4D...</div>';
+
+  $("matchGrid").innerHTML =
+    '<div style="padding:20px;color:#7b8795">Memuat prediksi pertandingan...</div>';
+
+  $("fixtureList").innerHTML =
+    '<div style="padding:22px;text-align:center;color:#7b8795">Memuat jadwal...</div>';
+
+  try {
+    const results = await Promise.allSettled(
+      leagues.map(fetchLeague)
+    );
+
+    const failed = results.filter(
+      result => result.status === "rejected"
+    );
+
+    games = results
+      .filter(result => result.status === "fulfilled")
+      .flatMap(result => result.value)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Jika seluruh permintaan gagal, tampilkan pesan error.
+    if (games.length === 0) {
+      $("heroContent").innerHTML =
+        '<div style="padding:45px 5px;text-align:center;color:#b7c2ce">Jadwal belum tersedia. Periksa koneksi Cloudflare Worker dan Console browser.</div>';
+
+      $("matchGrid").innerHTML =
+        '<div style="padding:20px;color:#7b8795">Tidak ada data pertandingan yang berhasil dimuat.</div>';
+
+      $("fixtureList").innerHTML =
+        '<div style="padding:22px;text-align:center;color:#7b8795">Jadwal belum tersedia.</div>';
+
+      console.error("Semua permintaan gagal:", failed);
+      return;
+    }
+
+    slideIndex = 0;
+    renderHero();
+    renderCards();
+    renderFixtures();
+    restart();
+
+    if (failed.length) {
+      console.warn(
+        `${failed.length} dari ${leagues.length} liga gagal dimuat.`
+      );
+      console.error(
+        failed.map(result => result.reason)
+      );
+    }
+  } catch (error) {
+    console.error("Gagal memuat pertandingan:", error);
+
+    $("heroContent").innerHTML =
+      '<div style="padding:45px 5px;text-align:center;color:#b7c2ce">Gagal memuat pertandingan. Silakan coba lagi.</div>';
+
+    $("matchGrid").innerHTML =
+      '<div style="padding:20px;color:#7b8795">Gagal memuat prediksi.</div>';
+
+    $("fixtureList").innerHTML =
+      '<div style="padding:22px;text-align:center;color:#7b8795">Gagal memuat jadwal.</div>';
+  } finally {
+    if (reloadButton) {
+      reloadButton.disabled = false;
+      reloadButton.textContent = "↻ PERBARUI PERTANDINGAN";
+    }
+  }
+}
+
+// Tombol navigasi banner.
+$("prev").onclick = () => {
+  if (!games.length) return;
+
+  slideIndex = (slideIndex - 1 + games.length) % games.length;
+  renderHero();
+  restart();
+};
+
+$("next").onclick = () => {
+  if (!games.length) return;
+
+  slideIndex = (slideIndex + 1) % games.length;
+  renderHero();
+  restart();
+};
+
+// Tombol muat ulang.
+$("reload").onclick = load;
+
+// Filter liga.
+document.querySelectorAll("[data-league]").forEach(button => {
+  button.onclick = () => {
+    leagueFilter = button.dataset.league;
+
+    document.querySelectorAll("[data-league]").forEach(item => {
+      item.classList.toggle("active", item === button);
+    });
+
+    renderCards();
+  };
+});
+
+// Hentikan autoplay saat tab tidak aktif.
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    clearInterval(timer);
+  } else {
+    restart();
+  }
+});
+
+// Mulai memuat data.
+load();
+
 </script>
 </body>
 </html>
