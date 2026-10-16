@@ -1170,9 +1170,29 @@ document.querySelectorAll("[data-select]").forEach(b=>b.onclick=()=>{let i=games
 if(i>=0){slideIndex=i;renderHero();restart();
 document.querySelector(".hero").scrollIntoView({behavior:"smooth"})}})}
 function renderFixtures(){let list=games.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));$("fixtureList").innerHTML=list.length?list.map(fixture).join(""):'<div style="padding:22px;text-align:center;color:#7b8795">Jadwal belum tersedia.</div>'}
-async function fetchLeague(l){let r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${l.id}/scoreboard`);
-if(!r.ok)throw Error("ESPN "+r.status);
-let d=await r.json();return(d.events||[]).map(e=>parse(e,l)).filter(Boolean)}
+async 
+function wibDateKey(value) {
+  const d = new Date(new Date(value).getTime() + 7 * 60 * 60 * 1000);
+  return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
+}
+
+async function fetchLeague(l) {
+  const today = wibDateKey(Date.now());
+  const lusa = wibDateKey(Date.now() + 2 * 24 * 60 * 60 * 1000);
+
+  const url = `https://panah4d-espn-api.motifpanah.workers.dev/matches?league=${encodeURIComponent(l.id)}&dates=${today}-${lusa}`;
+  const r = await fetch(url);
+
+  if (!r.ok) throw Error("API " + l.id + ": " + r.status);
+
+  const d = await r.json();
+  const allowedDates = new Set([today, lusa]);
+
+  return (d.events || [])
+    .map(e => parse(e, l))
+    .filter(g => g && g.date && allowedDates.has(wibDateKey(g.date)));
+}
+  
 function restart(){clearInterval(timer);
 if(games.length>1)timer=setInterval(()=>{slideIndex=(slideIndex+1)%games.length;renderHero()},5000)}
 async function load(){ $("heroContent").innerHTML='<div style="padding:55px 5px;text-align:center;color:#b7c2ce">Memuat Pertandingan PANAH4D</div>';
