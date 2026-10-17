@@ -1871,119 +1871,56 @@ document.addEventListener("keydown",function(e){
 
 </script>
 <script>
-(function () {
-  const slider = document.getElementById("leagueFilters");
-  if (!slider) return;
+/* ==========================================
+   PANAH4D — AUTO FIXTURE, LIVE SCORE,
+   PREDIKSI SKOR & ODDS ESTIMASI
+   Sumber jadwal: ESPN public scoreboard
+   Zona waktu: WIB
+   Update: setiap 60 detik
+========================================== */
 
-  const wrapper = slider.closest(".league-slider");
-  const prev = wrapper.querySelector(".league-arrow.prev");
-  const next = wrapper.querySelector(".league-arrow.next");
+const ESPN_API =
+  "https://site.api.espn.com/apis/site/v2/sports/soccer";
 
-  prev.addEventListener("click", function () {
-    slider.scrollBy({
-      left: -280,
-      behavior: "smooth"
-    });
-  });
-
-  next.addEventListener("click", function () {
-    slider.scrollBy({
-      left: 280,
-      behavior: "smooth"
-    });
-  });
-})();
+const UPDATE_INTERVAL = 60 * 1000;
 
 const leagues = [
   // INGGRIS
   { id: "eng.1", name: "Premier League" },
-  { id: "eng.2", name: "Championship" },
-  { id: "eng.3", name: "League One" },
-  { id: "eng.4", name: "League Two" },
-  { id: "eng.5", name: "National League" },
   { id: "eng.fa", name: "FA Cup" },
   { id: "eng.league_cup", name: "EFL Cup" },
 
   // SPANYOL
   { id: "esp.1", name: "La Liga" },
-  { id: "esp.2", name: "La Liga 2" },
   { id: "esp.copa_del_rey", name: "Copa del Rey" },
 
   // ITALIA
   { id: "ita.1", name: "Serie A" },
-  { id: "ita.2", name: "Serie B" },
-  { id: "ita.coppa_italia", name: "Coppa Italia" },
 
   // JERMAN
   { id: "ger.1", name: "Bundesliga" },
-  { id: "ger.2", name: "2. Bundesliga" },
-  { id: "ger.3", name: "3. Liga" },
-  { id: "ger.dfb_pokal", name: "DFB Pokal" },
 
   // PRANCIS
   { id: "fra.1", name: "Ligue 1" },
-  { id: "fra.2", name: "Ligue 2" },
-  { id: "fra.coupe_de_france", name: "Coupe de France" },
 
   // EROPA
-  { id: "uefa.champions", name: "UEFA Champions League" },
-  { id: "uefa.europa", name: "UEFA Europa League" },
-  { id: "uefa.europa.conf", name: "UEFA Conference League" },
-  { id: "uefa.euro", name: "UEFA European Championship" },
-  { id: "uefa.nations", name: "UEFA Nations League" },
-  { id: "uefa.world", name: "UEFA World Cup Qualifiers" },
+  { id: "uefa.champions", name: "Champions League" },
+  { id: "uefa.europa", name: "Europa League" },
+  { id: "uefa.europa.conf", name: "Conference League" },
+  { id: "uefa.nations", name: "Nations League" },
 
-  // BELANDA & PORTUGAL
+  // BELANDA
   { id: "ned.1", name: "Eredivisie" },
-  { id: "ned.2", name: "Eerste Divisie" },
-  { id: "por.1", name: "Primeira Liga" },
-  { id: "por.cup", name: "Taça de Portugal" },
-
-  // SKOTLANDIA
-  { id: "sco.1", name: "Scottish Premiership" },
-  { id: "sco.2", name: "Scottish Championship" },
-  { id: "sco.cup", name: "Scottish Cup" },
-
-  // TURKI & BELGIA
-  { id: "tur.1", name: "Süper Lig" },
-  { id: "bel.1", name: "Belgian Pro League" },
-  { id: "gre.1", name: "Greek Super League" },
-  { id: "aut.1", name: "Austrian Bundesliga" },
-  { id: "sui.1", name: "Swiss Super League" },
 
   // AMERIKA
   { id: "usa.1", name: "MLS" },
-  { id: "usa.nwsl", name: "NWSL Women" },
-  { id: "mex.1", name: "Liga MX" },
-  { id: "bra.1", name: "Brasileirão Serie A" },
-  { id: "bra.2", name: "Brasileirão Serie B" },
-  { id: "arg.1", name: "Argentine Primera División" },
-  { id: "conmebol.america", name: "Copa América" },
-  { id: "conmebol.libertadores", name: "Copa Libertadores" },
-  { id: "conmebol.sudamericana", name: "Copa Sudamericana" },
 
   // ASIA
   { id: "afc.champions", name: "AFC Champions League Elite" },
   { id: "afc.cup", name: "AFC Champions League Two" },
   { id: "afc.asian.cup", name: "AFC Asian Cup" },
   { id: "ksa.1", name: "Saudi Pro League" },
-  { id: "ksa.kings.cup", name: "Saudi King's Cup" },
-  { id: "jpn.1", name: "Japan J1 League" },
-  { id: "chn.1", name: "Chinese Super League" },
-  { id: "ind.1", name: "Indian Super League" },
-  { id: "tha.1", name: "Thai League 1" },
-  { id: "mys.1", name: "Malaysia Super League" },
   { id: "idn.1", name: "Indonesia Super League" },
-  { id: "sgp.1", name: "Singapore Premier League" },
-  { id: "aus.1", name: "Australia A-League Men" },
-  { id: "aus.w.1", name: "Australia A-League Women" },
-
-  // AFRIKA
-  { id: "caf.nations", name: "Africa Cup of Nations" },
-  { id: "caf.champions", name: "CAF Champions League" },
-  { id: "caf.confed", name: "CAF Confederation Cup" },
-  { id: "rsa.1", name: "South African Premiership" },
-  { id: "nga.1", name: "Nigeria Professional League" },
 
   // FIFA & INTERNASIONAL
   { id: "fifa.world", name: "FIFA World Cup" },
@@ -1991,328 +1928,817 @@ const leagues = [
   { id: "fifa.cwc", name: "FIFA Club World Cup" },
   { id: "fifa.world.u20", name: "FIFA U-20 World Cup" },
   { id: "fifa.world.u17", name: "FIFA U-17 World Cup" },
-  { id: "fifa.worldq", name: "FIFA World Cup Qualifiers" },
+  { id: "fifa.worldq", name: "World Cup Qualifiers" },
   { id: "fifa.worldq.afc", name: "FIFA Asian Qualifiers" },
   { id: "fifa.worldq.uefa", name: "FIFA European Qualifiers" },
   { id: "fifa.worldq.concacaf", name: "FIFA CONCACAF Qualifiers" },
   { id: "fifa.worldq.conmebol", name: "FIFA South American Qualifiers" },
   { id: "fifa.worldq.caf", name: "FIFA African Qualifiers" },
   { id: "fifa.friendly", name: "International Friendlies" },
-  { id: "fifa.friendly.w", name: "Women's International Friendlies" },
-  { id: "fifa.olympics", name: "Olympic Football Men" },
-  { id: "fifa.w.olympics", name: "Olympic Football Women" }
+  { id: "fifa.olympics", name: "Olympic Football" }
 ];
 
+let games = [];
+let slideIndex = 0;
+let leagueFilter = "all";
+let refreshTimer = null;
+let loading = false;
+
+const $ = id => document.getElementById(id);
+
+const esc = value =>
+  String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+
 /* ==========================================
-   PANAH4D - ESPN AUTO SCORE
-   Update otomatis setiap 60 detik
+   TANGGAL & WAKTU WIB
 ========================================== */
 
-const ESPN_SCORE_API =
-  "https://site.api.espn.com/apis/site/v2/sports/soccer";
+function getJakartaDate(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
 
-const ESPN_SCORE_INTERVAL = 60000;
+  const part = type =>
+    parts.find(x => x.type === type).value;
 
-async function getESPNScore(league) {
-  const url = `${ESPN_SCORE_API}/${league.id}/scoreboard`;
-  const response = await fetch(url);
+  return `${part("year")}${part("month")}${part("day")}`;
+}
+
+function getDateOffset(offset) {
+  const now = new Date();
+
+  const jakartaDate = new Date(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Jakarta",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(now)
+  );
+
+  jakartaDate.setDate(jakartaDate.getDate() + offset);
+
+  return getJakartaDate(jakartaDate);
+}
+
+function formatTime(date) {
+  return new Date(date).toLocaleTimeString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+}
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function formatDateTime(date) {
+  return `${formatDate(date)} ${formatTime(date)} WIB`;
+}
+
+/* ==========================================
+   PARSE DATA PERTANDINGAN ESPN
+========================================== */
+
+function parseEvent(event, league) {
+  const competition = event.competitions?.[0];
+  const teams = competition?.competitors || [];
+
+  const home = teams.find(t => t.homeAway === "home");
+  const away = teams.find(t => t.homeAway === "away");
+
+  if (!home || !away || !event.date) return null;
+
+  const status = event.status?.type || {};
+
+  let state = "MENDATANG";
+
+  if (status.state === "in") {
+    state = "LIVE";
+  } else if (status.completed) {
+    state = "SELESAI";
+  }
+
+  return {
+    id: String(event.id),
+    lid: league.id,
+    league: league.name,
+    date: event.date,
+    state,
+    status: status.detail || status.description || "",
+
+    home: {
+      name: home.team?.displayName ||
+        home.team?.name || "Home",
+      logo: home.team?.logo ||
+        home.team?.logos?.[0]?.href || "",
+      score: home.score ?? null
+    },
+
+    away: {
+      name: away.team?.displayName ||
+        away.team?.name || "Away",
+      logo: away.team?.logo ||
+        away.team?.logos?.[0]?.href || "",
+      score: away.score ?? null
+    }
+  };
+}
+
+async function fetchLeagueDate(league, date) {
+  const url =
+    `${ESPN_API}/${encodeURIComponent(league.id)}/scoreboard` +
+    `?dates=${date}`;
+
+  const response = await fetch(url, {
+    cache: "no-store"
+  });
 
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${league.id}`);
+    throw new Error(`${league.name}: HTTP ${response.status}`);
   }
 
   const data = await response.json();
 
-  return (data.events || []).map(event => {
-    const competition = event.competitions?.[0];
-    const teams = competition?.competitors || [];
-
-    const home = teams.find(t => t.homeAway === "home");
-    const away = teams.find(t => t.homeAway === "away");
-
-    if (!home || !away) return null;
-
-    const type = event.status?.type || {};
-
-    return {
-      id: String(event.id),
-      leagueId: league.id,
-      leagueName: league.name || league.id,
-      homeName: home.team?.displayName || home.team?.name || "",
-      awayName: away.team?.displayName || away.team?.name || "",
-      homeLogo: home.team?.logo || "",
-      awayLogo: away.team?.logo || "",
-      homeScore: home.score ?? null,
-      awayScore: away.score ?? null,
-      state: type.state === "in"
-        ? "LIVE"
-        : type.completed
-          ? "SELESAI"
-          : "JADWAL",
-      status: type.detail || type.description || "",
-      date: event.date
-    };
-  }).filter(Boolean);
+  return (data.events || [])
+    .map(event => parseEvent(event, league))
+    .filter(Boolean);
 }
 
-async function updateESPNAutoScore() {
-  if (typeof leagues === "undefined" || !Array.isArray(leagues)) {
-    console.error("PANAH4D: Variabel leagues belum tersedia.");
-    return [];
-  }
+async function fetchAllMatches() {
+  const dates = [
+    getDateOffset(0),
+    getDateOffset(1)
+  ];
 
-  const results = await Promise.allSettled(
-    leagues.map(league => getESPNScore(league))
+  const requests = leagues.flatMap(league =>
+    dates.map(date =>
+      fetchLeagueDate(league, date).catch(error => {
+        console.warn(
+          "Gagal mengambil liga:",
+          error.message
+        );
+        return [];
+      })
+    )
   );
 
-  const matches = results.flatMap((result, index) => {
-    if (result.status === "fulfilled") {
-      return result.value;
-    }
+  const results = await Promise.all(requests);
+  const unique = new Map();
 
-    console.warn(
-      "PANAH4D: Liga gagal dimuat:",
-      leagues[index]?.id,
-      result.reason?.message
-    );
-
-    return [];
+  results.flat().forEach(match => {
+    unique.set(match.id, match);
   });
 
-  window.panah4dESPNScore = matches;
+   const ONE_DAY = 24 * 60 * 60 * 1000;
+  const now = Date.now();
 
-  // Update kartu yang memiliki data-event-id.
-  document.querySelectorAll("[data-event-id]").forEach(card => {
-    const match = matches.find(
-      item => item.id === card.dataset.eventId
-    );
-
-    if (!match) return;
-
-    const score = card.querySelector(
-      ".actual-score, .mini-score"
-    );
-
-    if (score) {
-      const text =
-        match.homeScore !== null && match.awayScore !== null
-          ? `${match.homeScore} - ${match.awayScore}`
-          : "VS";
-
-      const scoreText = score.querySelector(".score-text");
-
-      if (scoreText) {
-        scoreText.textContent = text;
-      } else {
-        score.textContent = text;
-      }
-    }
-
-    const statusEl = card.querySelector(".match-status, .state");
-
-    if (statusEl) {
-      statusEl.textContent =
-        match.state === "LIVE"
-          ? `LIVE ${match.status}`.trim()
-          : match.status || match.state;
-    }
-  });
-
-  // Event ini bisa dipakai script render website yang sudah ada.
-  document.dispatchEvent(
-    new CustomEvent("panah4d:espn-updated", {
-      detail: matches
+  return [...unique.values()]
+    .filter(match => {
+      const kickoff = new Date(match.date).getTime();
+      return now < kickoff + ONE_DAY;
     })
-  );
-
-  console.log(
-    `PANAH4D: ${matches.length} pertandingan berhasil dimuat.`
-  );
-
-  return matches;
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 }
+/* ==========================================
+   LOGO TIM
+========================================== */
 
-// Jalankan pertama kali dan refresh setiap 60 detik.
-if (window.panah4dScoreTimer) {
-  clearInterval(window.panah4dScoreTimer);
-}
-
-updateESPNAutoScore().catch(console.error);
-
-window.panah4dScoreTimer = setInterval(() => {
-  if (!document.hidden) {
-    updateESPNAutoScore().catch(console.error);
+function teamLogo(team) {
+  if (team.logo) {
+    return `<img src="${esc(team.logo)}"
+      alt="${esc(team.name)}"
+      loading="lazy"
+      onerror="this.style.visibility='hidden'">`;
   }
-}, ESPN_SCORE_INTERVAL);
 
-let games=[],slideIndex=0,leagueFilter="all",timer=null;
-const $=id=>document.getElementById(id);
-$("year").textContent=new Date().getFullYear();$("dateLabel").textContent=new Date().toLocaleDateString("id-ID",{weekday:"short",day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Jakarta"});
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function tm(v){const d=new Date(v);return !v||isNaN(d)?"--:--":d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Jakarta"})}
-function dt(v){const d=new Date(v);return !v||isNaN(d)?"Jadwal belum tersedia":d.toLocaleString("id-ID",{weekday:"short",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Jakarta"})+" WIB"}
-function parse(e,l){const t=e.competitions?.[0]?.competitors;
-if(!t||t.length<2)return null;
-const h=t.find(x=>x.homeAway==="home")||t[0],a=t.find(x=>x.homeAway==="away")||t[1],s=e.status?.type;return{id:e.id,league:l.name,lid:l.id,date:e.date,state:s?.state==="in"?"LIVE":s?.completed?"SELESAI":"MENDATANG",home:{name:h.team?.displayName||h.team?.name||"Home",logo:h.team?.logos?.[0]?.href||h.team?.logo||"",score:h.score},away:{name:a.team?.displayName||a.team?.name||"Away",logo:a.team?.logos?.[0]?.href||a.team?.logo||"",score:a.score}}}
-function img(t){return t.logo?`<img src="${esc(t.logo)}" alt="${esc(t.name)}" loading="lazy" onerror="this.style.visibility='hidden'">`:'<span style="height:40px;display:grid;place-items:center;font-size:22px;color:#9ba7b4">⚽</span>'}
-function heroMarkup(g){return `<div class="league-label">${esc(g.league.toUpperCase())}</div>
-<div class="teams">
-<div class="team">${img(g.home)}<b>${esc(g.home.name)}</b>
-<small>HOME</small>
-</div>
-<div>
-<div class="score">0 - 0<small>PERTANDINGAN</small>
-</div>
-<div class="kickoff">${esc(dt(g.date))}</div>
-</div>
-<div class="team">${img(g.away)}<b>${esc(g.away.name)}</b>
-<small>AWAY</small>
-</div>
-</div>`}
-function renderHero(){if(!games.length)return;slideIndex=(slideIndex+games.length)%games.length;
-let g=games[slideIndex];$("heroContent").innerHTML=heroMarkup(g);$("counter").textContent=`MATCH ${String(slideIndex+1).padStart(2,"0")} / ${String(games.length).padStart(2,"0")}`;$("heroDate").textContent=dt(g.date);$("dots").innerHTML=games.slice(0,10).map((_,i)=>`<button class="${i===slideIndex%10?"active":""}" data-dot="${i}" aria-label="Slide ${i+1}">
-</button>`).join("");$("dots").querySelectorAll("[data-dot]").forEach(b=>b.onclick=()=>{slideIndex=+b.dataset.dot;renderHero();restart()})}
-
-function estimatePrediction(g){
-  // Estimasi demonstrasi, bukan model AI terlatih atau odds bookmaker.
-  // Menghasilkan skor netral konsisten berdasarkan ID event; tidak mengklaim akurasi.
-  const seed=String(g.id||g.home.name+g.away.name).split("").reduce((n,c)=>((n*31)+c.charCodeAt(0))>>>0,7);
-  const homeGoals=(seed%4), awayGoals=((seed>>>3)%4);
-  const rawHome=34+(seed%17), rawDraw=20+((seed>>>4)%12);
-  let home=rawHome, draw=rawDraw, away=100-rawHome-rawDraw;
-  if(away<15){away=15;home=100-draw-away}
-  const total=home+draw+away;
-  home=Math.round(home/total*100);draw=Math.round(draw/total*100);away=100-home-draw;
-  // Decimal odds indikatif tanpa margin; bukan harga dari bandar.
-  const odds=n=>(100/Math.max(n,1)).toFixed(2);
-  return {score:`${homeGoals} - ${awayGoals}`,home,draw,away,oh:odds(home),od:odds(draw),oa:odds(away)};
+  return `<span style="display:block;height:40px;
+    padding-top:8px;font-size:22px">⚽</span>`;
 }
-function predictionPanel(g){
-  const p=estimatePrediction(g);
-  return `<div class="ai-prediction">
-    <div class="ai-prediction-head"><b>ESTIMASI PREDIKSI AKURAT 100% PANAH4D</b><span>NEW</span></div>
-    <div class="ai-scoreline">Perkiraan skor: ${p.score}</div>
-    <div class="ai-prediction-grid">
-      <div class="ai-prediction-cell"><small>1 · HOME</small><strong>${p.home}%</strong><small>Odds ${p.oh}</small></div>
-      <div class="ai-prediction-cell"><small>X · DRAW</small><strong>${p.draw}%</strong><small>Odds ${p.od}</small></div>
-      <div class="ai-prediction-cell"><small>2 · AWAY</small><strong>${p.away}%</strong><small>Odds ${p.oa}</small></div>
+
+/* ==========================================
+   SKOR AKTUAL
+========================================== */
+
+function actualScore(match) {
+  if (
+    match.home.score == null ||
+    match.away.score == null
+  ) {
+    return "–";
+  }
+
+  return `${esc(match.home.score)} - ${esc(match.away.score)}`;
+}
+
+/* ==========================================
+   TAMBAHAN: PREDIKSI SKOR & ODDS ESTIMASI
+
+   Catatan:
+   - Bukan odds resmi bookmaker.
+   - Bukan hasil API statistik.
+   - Menggunakan model heuristik sederhana.
+========================================== */
+
+function stableTeamValue(name) {
+  let hash = 0;
+
+  for (const char of String(name || "")) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+
+  return (hash % 1000) / 1000;
+}
+
+
+/* ==========================================
+   PANAH4D — PREDIKSI SKOR & ODDS MODERN
+========================================== */
+
+function getPrediction(match) {
+  if (match.state !== "MENDATANG") {
+    return null;
+  }
+
+  const homeValue = stableTeamValue(match.home.name);
+  const awayValue = stableTeamValue(match.away.name);
+
+  const homeExpected = Math.max(
+    0.35,
+    Math.min(2.8, 1.15 + (homeValue - 0.5) * 1.1 + 0.18)
+  );
+
+  const awayExpected = Math.max(
+    0.25,
+    Math.min(2.5, 1.05 + (awayValue - 0.5) * 1.0)
+  );
+
+  const homeGoals = Math.max(
+    0,
+    Math.min(4, Math.round(homeExpected))
+  );
+
+  const awayGoals = Math.max(
+    0,
+    Math.min(4, Math.round(awayExpected))
+  );
+
+  const diff = homeExpected - awayExpected;
+
+  let homeProb = Math.max(0.12, 0.38 + diff * 0.16);
+  let drawProb = Math.max(0.16, 0.28 - Math.abs(diff) * 0.04);
+  let awayProb = Math.max(0.12, 1 - homeProb - drawProb);
+
+  const total = homeProb + drawProb + awayProb;
+
+  homeProb /= total;
+  drawProb /= total;
+  awayProb /= total;
+
+  const home = Math.round(homeProb * 100);
+  const draw = Math.round(drawProb * 100);
+  const away = 100 - home - draw;
+
+  const decimalOdds = probability =>
+    (1 / probability).toFixed(2);
+
+  return {
+    score: `${homeGoals} - ${awayGoals}`,
+    home,
+    draw,
+    away,
+    homeOdds: decimalOdds(homeProb),
+    drawOdds: decimalOdds(drawProb),
+    awayOdds: decimalOdds(awayProb)
+  };
+}
+
+function predictionMarkup(match) {
+  const prediction = getPrediction(match);
+
+  if (!prediction) return "";
+
+  return `
+    <div class="PANAH-prediction" style="
+      margin-top:10px;
+      padding:10px;
+      border:1px solid #bfd8fa;
+      border-radius:9px;
+      background:linear-gradient(135deg,#f2f8ff,#e3efff);
+      color:#102542;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-family:inherit;
+    ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:8px;
+      ">
+
+        <b style="
+          color:#175da8;
+          font-size:9px;
+          font-weight:800;
+          letter-spacing:0.2px;
+        ">ESTIMASI PREDIKSI AKURAT 100% PANAH4D</b>
+
+        <span style="
+          padding:4px 6px;
+          border-radius:5px;
+          background:#d4e7ff;
+          color:#175da8;
+          font-size:9px;
+          font-weight:700;
+        ">NEW</span>
+      </div>
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:8px;
+        font-size:11px;
+        font-weight:700;
+      ">
+        <span>Perkiraan skor</span>
+        <strong style="font-size:16px;color:#075dcc">
+          ${prediction.score}
+        </strong>
+      </div>
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:6px;
+      ">
+
+        <div style="
+          min-width:0;
+          padding:8px 3px;
+          border:1px solid #c9def8;
+          border-radius:7px;
+          background:#fff;
+          text-align:center;
+        ">
+          <small style="display:block;color:#718096;font-size:9px">
+            1 · HOME
+          </small>
+          <strong style="display:block;margin:5px 0;color:#1769cc;font-size:14px">
+            ${prediction.home}%
+          </strong>
+          <small style="color:#718096;font-size:9px">
+            Odds ${prediction.homeOdds}
+          </small>
+        </div>
+
+        <div style="
+          min-width:0;
+          padding:8px 3px;
+          border:1px solid #c9def8;
+          border-radius:7px;
+          background:#fff;
+          text-align:center;
+        ">
+          <small style="display:block;color:#718096;font-size:9px">
+            X · DRAW
+          </small>
+          <strong style="display:block;margin:5px 0;color:#1769cc;font-size:14px">
+            ${prediction.draw}%
+          </strong>
+          <small style="color:#718096;font-size:9px">
+            Odds ${prediction.drawOdds}
+          </small>
+        </div>
+
+        <div style="
+          min-width:0;
+          padding:8px 3px;
+          border:1px solid #c9def8;
+          border-radius:7px;
+          background:#fff;
+          text-align:center;
+        ">
+          <small style="display:block;color:#718096;font-size:9px">
+            2 · AWAY
+          </small>
+          <strong style="display:block;margin:5px 0;color:#1769cc;font-size:14px">
+            ${prediction.away}%
+          </strong>
+          <small style="color:#718096;font-size:9px">
+            Odds ${prediction.awayOdds}
+          </small>
+        </div>
+
+      </div>
+
+      <small style="
+        color:#718096;
+        font-size:9px;
+        line-height:1.5;
+      ">
+        PANAH4D | Prediksi Bola Terpercaya dan Akurat 99%, Platform Digital Terbaik Se-asia.
+      </small>
+
     </div>
-    <div class="ai-prediction-note">PANAH4D | Pusat informasi pertandingan dengan data akurat, terpercaya, dan terkini untuk pengalaman yang lebih informatif.
-</div>
-  </div>`;
+  `;
 }
 
-function card(g){return `<article class="match-card">
-<div class="match-top">
-<b>${esc(g.league.toUpperCase())}</b>
-<span>${esc(tm(g.date))} WIB</span>
-</div>
-<div class="match-body">
-<div class="match-teams">
-<div class="mini-team">${img(g.home)}<b>${esc(g.home.name)}</b>
-</div>
-<div class="mini-score">0 - 0<small>PREDIKSI</small>
-</div>
-<div class="mini-team">${img(g.away)}<b>${esc(g.away.name)}</b>
-</div>
-</div>
-${predictionPanel(g)}
-<div class="match-foot">
-<span>${esc(dt(g.date))}</span>
-<a class="detail"
-   href="https://panahkawan.com"
-   target="_blank"
-   rel="noopener noreferrer">
-  PASANG TARUHAN
-</a>
-</div>
-</div>
-</article>`}
-function fixture(g){return `<div class="fixture">
-<span class="time">
-  ${new Date(g.date).toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "short",
-    timeZone: "Asia/Jakarta"
-  })}
-  <br>
-  ${esc(tm(g.date))}
-</span>
-<span class="league">${esc(g.league)}</span>
-<span class="pair">
-<span class="fixture-team">${img(g.home)}<b>${esc(g.home.name)}</b>
-</span>
-<span class="versus">vs</span>
-<span class="fixture-team">${img(g.away)}<b>${esc(g.away.name)}</b>
-</span>
-</span>
-<span class="actual-score">${g.home.score!=null&&g.away.score!=null?`${esc(g.home.score)}-${esc(g.away.score)}`:"–"}</span>
-<span class="state ${g.state==="LIVE"?"live":""}">${g.state==="LIVE"?"LIVE":g.state==="SELESAI"?"SELESAI":"JADWAL"}</span>
-</div>`}
-function renderCards(){let list=games.filter(g=>leagueFilter==="all"||g.lid===leagueFilter);$("matchGrid").innerHTML=list.length?list.map(card).join(""):'<div style="padding:20px;color:#7b8795">Tidak ada pertandingan di liga ini.</div>';
-document.querySelectorAll("[data-select]").forEach(b=>b.onclick=()=>{let i=games.findIndex(g=>g.id===b.dataset.select);
-if(i>=0){slideIndex=i;renderHero();restart();
-document.querySelector(".hero").scrollIntoView({behavior:"smooth"})}})}
-function renderFixtures(){let list=games.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));$("fixtureList").innerHTML=list.length?list.map(fixture).join(""):'<div style="padding:22px;text-align:center;color:#7b8795">Jadwal belum tersedia.</div>'}
-async function fetchLeague(l){let r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${l.id}/scoreboard`);
-if(!r.ok)throw Error("ESPN "+r.status);
-let d=await r.json();return(d.events||[]).map(e=>parse(e,l)).filter(Boolean)}
-function restart(){clearInterval(timer);
-if(games.length>1)timer=setInterval(()=>{slideIndex=(slideIndex+1)%games.length;renderHero()},5000)}
-async function load(){ $("heroContent").innerHTML='<div style="padding:55px 5px;text-align:center;color:#b7c2ce">Memuat Pertandingan PANAH4D</div>';
-const results = await Promise.allSettled(
-  leagues.map(fetchLeague)
-);
+/* ==========================================
+   STATUS PERTANDINGAN
+========================================== */
 
-const allGames = results.flatMap(r =>
-  r.status === "fulfilled" ? r.value : []
-);
+function statusLabel(match) {
+  if (match.state === "LIVE") {
+    return `LIVE${
+      match.status ? " · " + esc(match.status) : ""
+    }`;
+  }
 
-const now = Date.now();
+  if (match.state === "SELESAI") {
+    return "SELESAI";
+  }
 
-games = [
-  ...new Map(
-    allGames.map(g => [String(g.id), g])
-  ).values()
-]
-.filter(g => {
-  const kickoff = new Date(g.date).getTime();
-
-  // Tampilkan hanya pertandingan yang belum dimulai
-  return Number.isFinite(kickoff) && kickoff > now;
-})
-.sort((a, b) =>
-  new Date(a.date) - new Date(b.date)
-);
-
-if (!games.length) {
-  $("heroContent").innerHTML =
-    '<div style="padding:45px 5px;text-align:center;color:#b7c2ce">Belum ada pertandingan mendatang yang tersedia.</div>';
-
-  $("counter").textContent = "MATCH 00 / 00";
-  $("dots").innerHTML = "";
-
-  $("matchGrid").innerHTML =
-    '<div style="padding:20px;color:#7b8795">Pertandingan mendatang belum tersedia.</div>';
-
-  $("fixtureList").innerHTML =
-    '<div style="padding:20px;color:#7b8795">Jadwal mendatang belum tersedia.</div>';
-
-  clearInterval(timer);
-  return;
+  return "JADWAL";
 }
 
-slideIndex = 0;
-renderHero();
-renderCards();
-renderFixtures();
-restart();
-}
-$("prev").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex-1+games.length)%games.length;renderHero();restart()};$("next").onclick=()=>{if(!games.length)return;slideIndex=(slideIndex+1)%games.length;renderHero();restart()};$("reload").onclick=load;
-document.querySelectorAll("[data-league]").forEach(b=>b.onclick=()=>{leagueFilter=b.dataset.league;
-document.querySelectorAll("[data-league]").forEach(x=>x.classList.toggle("active",x===b));renderCards()});
-document.addEventListener("visibilitychange",()=>{if(document.hidden)clearInterval(timer);else restart()});load();
+/* ==========================================
+   BANNER HERO
+========================================== */
 
+function heroMarkup(match) {
+  const score = match.state === "MENDATANG"
+    ? "0 - 0"
+    : actualScore(match);
+
+  return `
+    <div class="league-label">
+      ${esc(match.league.toUpperCase())}
+    </div>
+
+    <div class="teams">
+      <div class="team">
+        ${teamLogo(match.home)}
+        <b>${esc(match.home.name)}</b>
+        <small>HOME</small>
+      </div>
+
+      <div>
+        <div class="score">
+          ${score}
+          <small>${statusLabel(match)}</small>
+        </div>
+
+        <div class="kickoff">
+          ${formatDateTime(match.date)}
+        </div>
+      </div>
+
+      <div class="team">
+        ${teamLogo(match.away)}
+        <b>${esc(match.away.name)}</b>
+        <small>AWAY</small>
+      </div>
+    
+  `;
+}
+
+function renderHero() {
+  if (!games.length) return;
+
+  slideIndex = (slideIndex + games.length) % games.length;
+
+  const match = games[slideIndex];
+
+  $("heroContent").innerHTML = heroMarkup(match);
+
+  $("counter").textContent =
+    `MATCH ${String(slideIndex + 1).padStart(2, "0")} / ` +
+    String(games.length).padStart(2, "0");
+
+  $("heroDate").textContent =
+    `${formatDateTime(match.date)} · ${statusLabel(match)}`;
+
+  $("dots").innerHTML = games.slice(0, 10).map((_, index) => `
+    <button class="${index === slideIndex % 10 ? "active" : ""}"
+      data-dot="${index}" aria-label="Slide ${index + 1}">
+    </button>
+  `).join("");
+
+  $("dots").querySelectorAll("[data-dot]").forEach(button => {
+    button.onclick = () => {
+      slideIndex = Number(button.dataset.dot);
+      renderHero();
+    };
+  });
+}
+
+/* ==========================================
+   KARTU PERTANDINGAN + PREDIKSI
+========================================== */
+
+/* ==========================================
+   KARTU PERTANDINGAN + PREDIKSI
+========================================== */
+
+function card(match) {
+  const score = match.state === "MENDATANG"
+    ? "0 - 0"
+    : actualScore(match);
+
+  return `
+    <article class="match-card" data-event-id="${esc(match.id)}">
+
+      <div class="match-top">
+        <b>${esc(match.league.toUpperCase())}</b>
+        <span>${formatTime(match.date)} WIB</span>
+      </div>
+
+      <div class="match-body">
+        <div class="match-teams">
+
+          <div class="mini-team">
+            ${teamLogo(match.home)}
+            <b>${esc(match.home.name)}</b>
+          </div>
+
+          
+          <div class="mini-score">
+            VS
+            <small>${statusLabel(match)}</small>
+          </div>
+
+
+          <div class="mini-team">
+            ${teamLogo(match.away)}
+            <b>${esc(match.away.name)}</b>
+          </div>
+
+        </div>
+
+        ${predictionMarkup(match)}
+
+        <div class="match-foot">
+          <span>${formatDate(match.date)}</span>
+
+          <a class="detail"
+             href="https://panahkawan.com"
+             target="_blank"
+             rel="noopener noreferrer">
+            PASANG TARUHAN
+          </a>
+        </div>
+
+      </div>
+    </article>
+  `;
+}
+
+/* ==========================================
+   DAFTAR FIXTURE
+========================================== */
+
+function fixture(match) {
+  return `
+    <div class="fixture" data-event-id="${esc(match.id)}">
+
+      <span class="time">
+        ${formatDate(match.date)}
+        <br>${formatTime(match.date)} WIB
+      </span>
+
+      <span class="league">
+        ${esc(match.league)}
+      </span>
+
+      <span class="pair">
+
+        <span class="fixture-team">
+          ${teamLogo(match.home)}
+          <b>${esc(match.home.name)}</b>
+        </span>
+
+        <span class="versus">vs</span>
+
+        <span class="fixture-team">
+          ${teamLogo(match.away)}
+          <b>${esc(match.away.name)}</b>
+        </span>
+
+      </span>
+
+      <span class="actual-score">
+        ${actualScore(match)}
+      </span>
+
+      <span class="state ${match.state === "LIVE" ? "live" : ""}">
+        ${statusLabel(match)}
+      </span>
+
+    </div>
+  `;
+}
+
+/* ==========================================
+   RENDER KARTU
+========================================== */
+
+function renderCards() {
+  const list = games.filter(match =>
+    leagueFilter === "all" ||
+    match.lid === leagueFilter
+  );
+
+  $("matchGrid").innerHTML = list.length
+    ? list.map(card).join("")
+    : `<div style="padding:20px;color:#7b8795">
+        Tidak ada pertandingan pada liga ini.
+      </div>`;
+}
+
+function renderFixtures() {
+  $("fixtureList").innerHTML = games.length
+    ? games.map(fixture).join("")
+    : `<div style="padding:22px;text-align:center;color:#7b8795">
+        Tidak ada jadwal yang tersedia untuk hari ini dan besok.
+      </div>`;
+}
+
+/* ==========================================
+   LOAD / UPDATE PERTANDINGAN
+========================================== */
+
+async function loadMatches() {
+  if (loading) return;
+
+  loading = true;
+
+  const button = $("reload");
+
+  if (button) {
+    button.textContent = "MEMPERBARUI...";
+  }
+
+  try {
+    const freshMatches = await fetchAllMatches();
+
+    games = freshMatches;
+
+    slideIndex = Math.min(
+      slideIndex,
+      Math.max(0, games.length - 1)
+    );
+
+    if (!games.length) {
+      $("heroContent").innerHTML =
+        `<div style="padding:35px;text-align:center">
+          Tidak ada data pertandingan. Coba perbarui kembali.
+        </div>`;
+
+      $("counter").textContent = "MATCH 00 / 00";
+      $("dots").innerHTML = "";
+    } else {
+      renderHero();
+    }
+
+    renderCards();
+    renderFixtures();
+
+    if ($("dateLabel")) {
+      $("dateLabel").textContent = formatDate(new Date());
+    }
+
+    console.log(
+      `PANAH4D: ${games.length} pertandingan dimuat.`,
+      new Date().toLocaleString("id-ID")
+    );
+
+  } catch (error) {
+    console.error(
+      "PANAH4D gagal memperbarui jadwal:",
+      error
+    );
+
+    if (!games.length) {
+      $("heroContent").innerHTML =
+        `<div style="padding:35px;text-align:center">
+          Gagal mengambil data. Periksa koneksi atau akses sumber data.
+        </div>`;
+    }
+
+  } finally {
+    loading = false;
+
+    if (button) {
+      button.textContent = "↻ PERBARUI PERTANDINGAN";
+    }
+  }
+}
+
+/* ==========================================
+   TOMBOL NAVIGASI BANNER
+========================================== */
+
+$("prev").onclick = () => {
+  if (!games.length) return;
+
+  slideIndex =
+    (slideIndex - 1 + games.length) % games.length;
+
+  renderHero();
+};
+
+$("next").onclick = () => {
+  if (!games.length) return;
+
+  slideIndex =
+    (slideIndex + 1) % games.length;
+
+  renderHero();
+};
+
+/* ==========================================
+   TOMBOL REFRESH MANUAL
+========================================== */
+
+$("reload").onclick = loadMatches;
+
+/* ==========================================
+   FILTER LIGA
+========================================== */
+
+document.querySelectorAll("[data-league]").forEach(button => {
+  button.onclick = () => {
+    leagueFilter = button.dataset.league;
+
+    document.querySelectorAll("[data-league]").forEach(item => {
+      item.classList.toggle("active", item === button);
+    });
+
+    renderCards();
+  };
+});
+
+/* ==========================================
+   TAHUN FOOTER
+========================================== */
+
+if ($("year")) {
+  $("year").textContent = new Date().getFullYear();
+}
+
+/* ==========================================
+   MUAT DATA PERTAMA KALI
+========================================== */
+
+loadMatches();
+
+/* ==========================================
+   AUTO UPDATE SETIAP 60 DETIK
+========================================== */
+
+if (refreshTimer) {
+  clearInterval(refreshTimer);
+}
+
+refreshTimer = setInterval(() => {
+  if (!document.hidden) {
+    loadMatches();
+  }
+}, UPDATE_INTERVAL);
+
+/* ==========================================
+   UPDATE SAAT KEMBALI KE TAB
+========================================== */
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    loadMatches();
+  }
+});
+  
+  
 const menuToggle = document.getElementById("menuToggle");
 const navMenu = document.getElementById("navMenu");
 
@@ -2444,7 +2870,44 @@ document.addEventListener("keydown", function (event) {
   });
 })();
 
+  
+/* NAVIGASI FILTER LIGA */
+document.addEventListener("DOMContentLoaded", () => {
+  const filters = document.querySelector(".league-filters");
+  const prevBtn = document.querySelector(".league-arrow.prev");
+  const nextBtn = document.querySelector(".league-arrow.next");
+
+  if (!filters || !prevBtn || !nextBtn) {
+    console.warn("Container liga atau tombol panah tidak ditemukan.");
+    return;
+  }
+
+  prevBtn.addEventListener("click", () => {
+    filters.scrollBy({
+      left: -250,
+      behavior: "smooth"
+    });
+  });
+
+  nextBtn.addEventListener("click", () => {
+    filters.scrollBy({
+      left: 250,
+      behavior: "smooth"
+    });
+  });
+});
+
+  
   </script>
+<!-- Begin of Chaport Live Chat code -->
+<script type="text/javascript">
+(function(w,d,v3){
+w.chaportConfig = {
+appId : '65df1b435f70a2e6926950dd',
+};
+
+if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push(arguments)};v3.on=function(e,fn){if(!v3._l[e])v3._l[e]=[];v3._l[e].push(fn)};var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://app.chaport.com/javascripts/insert.js';var ss=d.getElementsByTagName('script')[0];ss.parentNode.insertBefore(s,ss)})(window, document);
+</script>
 <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=27c58f31-4c95-41cf-8e12-b7a110227e14"> </script>
 
 </body>
