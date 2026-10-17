@@ -2237,72 +2237,75 @@ function predictionMarkup(match) {
 
   return `
     
-<div class="panah-prediction" style="
-  margin-top:10px;
-  padding:10px;
-  border:1px solid #f59e0b;
-  border-radius:9px;
-  background:linear-gradient(135deg,#fff7e8,#ffdf9e);
-  color:#111111;
-  box-sizing:border-box;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  font-family:inherit;
-">
 
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:8px;
-  ">
-    <b style="
+<div class="PANAH-prediction" style="
+      margin-top:10px;
+      padding:10px;
+      border:1px solid #f59e0b;
+      border-radius:9px;
+      background:linear-gradient(135deg,#fff7e8,#ffe3ad);
       color:#111111;
-      font-size:9px;
-      font-weight:800;
-      letter-spacing:0.2px;
-    ">ESTIMASI PREDIKSI AKURAT 100% MOTIF4D</b>
-
-    <span style="
-      padding:4px 6px;
-      border-radius:5px;
-      background:#ffb52e;
-      color:#111111;
-      font-size:9px;
-      font-weight:700;
-    ">NEW</span>
-  </div>
-
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:8px;
-    font-size:11px;
-    font-weight:700;
-    color:#111111;
-  ">
-    <span>Perkiraan skor</span>
-    <strong style="font-size:16px;color:#e87500">
-      ${prediction.score}
-    </strong>
-  </div>
-
-  <div style="
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:6px;
-  ">
-
-    <div style="
-      min-width:0;
-      padding:8px 3px;
-      border:1px solid #f5c36b;
-      border-radius:7px;
-      background:#ffffff;
-      text-align:center;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-family:inherit;
     ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:8px;
+      ">
+
+        <b style="
+          color:#111111;
+          font-size:9px;
+          font-weight:800;
+          letter-spacing:0.2px;
+        ">ESTIMASI PREDIKSI AKURAT 100% PANAH4D</b>
+
+        <span style="
+          padding:4px 6px;
+          border-radius:5px;
+          background:#ffb52e;
+          color:#111111;
+          font-size:9px;
+          font-weight:700;
+        ">NEW</span>
+      </div>
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:8px;
+        font-size:11px;
+        font-weight:700;
+        color:#111111;
+      ">
+        <span>Perkiraan skor</span>
+        <strong style="font-size:16px;color:#e87500">
+          ${prediction.score}
+        </strong>
+      </div>
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:6px;
+      ">
+
+        <div style="
+          min-width:0;
+          padding:8px 3px;
+          border:1px solid #f5c36b;
+          border-radius:7px;
+          background:#ffffff;
+          text-align:center;
+        ">
+
       <small style="display:block;color:#555555;font-size:9px">
         1 · HOME
       </small>
