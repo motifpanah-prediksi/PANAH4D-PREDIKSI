@@ -2003,13 +2003,12 @@ function formatTime(date) {
 function formatDate(date) {
   return new Date(date).toLocaleDateString("id-ID", {
     timeZone: "Asia/Jakarta",
-    weekday: "short",
     day: "2-digit",
     month: "short",
     year: "numeric"
   });
 }
-
+  
 function formatDateTime(date) {
   return `${formatDate(date)} ${formatTime(date)} WIB`;
 }
