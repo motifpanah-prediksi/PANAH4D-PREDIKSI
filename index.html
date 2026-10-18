@@ -2896,6 +2896,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+/* ==========================================
+   PANAH4D - AUTO SLIDE FEATURED MATCH
+   Ganti banner setiap 5 detik
+========================================== */
+
+if (window.heroAutoSlideTimer) {
+  clearInterval(window.heroAutoSlideTimer);
+}
+
+window.heroAutoSlideTimer = setInterval(() => {
+  if (document.hidden) return;
+  if (typeof games === "undefined" || games.length <= 1) return;
+
+  slideIndex = (slideIndex + 1) % games.length;
+  renderHero();
+}, 10000);
   
   </script>
 <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=27c58f31-4c95-41cf-8e12-b7a110227e14"> </script>
