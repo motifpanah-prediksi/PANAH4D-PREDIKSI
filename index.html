@@ -2106,15 +2106,15 @@ async function fetchAllMatches() {
     unique.set(match.id, match);
   });
 
-  const ONE_DAY = 24 * 60 * 60 * 1000;
-  const now = Date.now();
+const TWO_DAYS = 48 * 60 * 60 * 1000;
+const now = Date.now();
 
-  return [...unique.values()]
-    .filter(match => {
-      const kickoff = new Date(match.date).getTime();
-      return now < kickoff + ONE_DAY;
-    })
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
+return [...unique.values()]
+  .filter(match => {
+    const kickoff = new Date(match.date).getTime();
+    return now < kickoff + TWO_DAYS;
+  })
+  .sort((a, b) => new Date(a.date) - new Date(b.date));
 }
 
 /* ==========================================
