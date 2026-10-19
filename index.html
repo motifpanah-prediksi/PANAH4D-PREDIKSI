@@ -2082,9 +2082,10 @@ async function fetchLeagueDate(league, date) {
 }
 
 async function fetchAllMatches() {
-  const dates = [
-    getDateOffset(0),
-    getDateOffset(1)
+const dates = [
+  getDateOffset(-1), // Kemarin
+  getDateOffset(0),  // Hari ini
+  getDateOffset(1)   // Besok
   ];
 
   const requests = leagues.flatMap(league =>
